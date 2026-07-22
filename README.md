@@ -203,15 +203,15 @@ Tickets and info:
 
 ### Lecturers
 
-- [Markus Leippold](https://www.df.uzh.ch/en/persons/professorship/leippold.html) (University of Zurich), <markus.leippold@df.uzh.ch>
+- [Markus Leippold](https://www.df.uzh.ch/en/persons/professorship/leippold.html) (University of Zurich and Swiss Finance Institute), <markus.leippold@df.uzh.ch>
 - [Simon Scheidegger](https://sites.google.com/site/simonscheidegger/) (University of Lausanne and Grantham Research Institute, London School of Economics), <simon.scheidegger@unil.ch>
-- [Fabio Trojani](https://www.unige.ch/gsem/en/research/faculty/all/fabio-trojani/) (University of Geneva), <fabio.trojani@unige.ch>
+- [Fabio Trojani](https://www.unige.ch/gsem/en/research/faculty/all/fabio-trojani/) (University of Geneva and Swiss Finance Institute), <fabio.trojani@unige.ch>
 - [Yucheng Yang](https://sites.google.com/site/yangyucheng1993/home) (University of Zurich and Swiss Finance Institute), <yucheng.yang@uzh.ch>
 
 ### Co-academic directors
 
 - [Simon Scheidegger](https://sites.google.com/site/simonscheidegger/) (University of Lausanne and Grantham Research Institute, London School of Economics)
-- [Fabio Trojani](https://www.unige.ch/gsem/en/research/faculty/all/fabio-trojani/) (University of Geneva)
+- [Fabio Trojani](https://www.unige.ch/gsem/en/research/faculty/all/fabio-trojani/) (University of Geneva and Swiss Finance Institute)
 
 ### Local organizers
 
