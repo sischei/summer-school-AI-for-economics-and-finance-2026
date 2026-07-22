@@ -138,7 +138,7 @@ The summer school (and conference) will take place in Classrooms 7 and 8, locate
 15:30 - 17:00 | [Using Deep Sequence Modelling in Finance](day3/Trojani/slides) | Trojani
 
 
-## The conference, August 27 - 28, 2026
+## The conference, Thursday - Friday, August 27 - 28, 2026
 
 Directly following the summer school, the *Deep Learning for Dynamic Stochastic Models* conference brings together scholars and practitioners working on high-dimensional, nonlinear, and stochastic models. The program features invited talks, contributed presentations, and panel discussions. See the [conference program](https://sites.google.com/carloalberto.org/deeplearningsummerschool2026/conference-program) for details.
 
