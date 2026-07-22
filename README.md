@@ -21,7 +21,7 @@ Summer School on [AI for Economics and Finance](https://sites.google.com/carloal
 The first half of the course focuses on using neural network architectures to solve high-dimensional economic problems:
 
 * **Deep Equilibrium Nets & Deep Surrogates** — solving dynamic stochastic models, with guided coding exercises, followed by the use of deep surrogates for the *estimation* of such models.
-* **Heterogeneous agent models** — how machine learning, specifically [DeepHAM](https://github.com/frankhan91/DeepHAM) and structural reinforcement learning, efficiently solves models that were previously computationally intractable.
+* **Heterogeneous agent models** — how machine learning, specifically DeepHAM and structural reinforcement learning, efficiently solves models that were previously computationally intractable.
 * **PDEs & continuous-time models** — physics-informed neural networks (PINNs) for solving partial differential equations, alongside dedicated deep learning techniques for continuous-time frameworks in economics and finance.
 
 ### 2. Large Language Models and Sequence Modeling for Economics and Finance (days 2 & 3)
