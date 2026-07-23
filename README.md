@@ -81,6 +81,7 @@ The lectures will be interactive, in a workshop-like style, using [Python](http:
 
 ### Recommended reading
 
+* **[Reading list (PDF)](Reading_List.pdf)**, the pre-reading and pre-coding to complete before arriving, plus core and background readings for every session ([LaTeX source](Reading_List.tex)).
 * [Mathematics for Machine Learning](https://mml-book.github.io/), a good overview of the mathematical skills participants are expected to be fluent in.
 * [Deep Learning](https://www.deeplearningbook.org/) (Goodfellow, Bengio, and Courville).
 
@@ -95,7 +96,7 @@ The lectures will be interactive, in a workshop-like style, using [Python](http:
 |------|------|
 | [`day1/`](day1), [`day2/`](day2), [`day3/`](day3) | One folder per lecturer, each with `slides/`, `readings/`, and `code/` |
 | [`python_refresher/`](python_refresher) | Self-study notebooks on Python basics and Jupyter |
-| `screens/` | Images used in this README |
+| [`Reading_List.pdf`](Reading_List.pdf) | Per-session reading list, with the [LaTeX source](Reading_List.tex) alongside it |
 
 Lecture materials are added as the summer school approaches, and are also distributed via the Nuvolos Cloud.
 
@@ -195,7 +196,7 @@ Tickets and info:
 ### Support and contacts
 
 * For any organizational question, please write to the default email address of the summer school: <deeplearningconf26@gmail.com>
-* For any question regarding whereabouts, local assistance, etc., there is a team of students that is available to help, and should be contacted via email: **TBA**
+* For any question regarding whereabouts, local assistance, etc., there is a team of students that is available to help, and should be contacted via email: <deeplearningconf26@gmail.com>
 * For questions about the computing platform: Nuvolos Support, <support@nuvolos.cloud>
 
 
@@ -203,7 +204,7 @@ Tickets and info:
 
 ### Lecturers
 
-- [Markus Leippold](https://www.df.uzh.ch/en/persons/professorship/leippold.html) (University of Zurich and Swiss Finance Institute), <markus.leippold@df.uzh.ch>
+- [Markus Leippold](https://www.df.uzh.ch/en/people/professor/leippold.html) (University of Zurich and Swiss Finance Institute), <markus.leippold@df.uzh.ch>
 - [Simon Scheidegger](https://sites.google.com/site/simonscheidegger/) (University of Lausanne and Grantham Research Institute, London School of Economics), <simon.scheidegger@unil.ch>
 - [Fabio Trojani](https://www.unige.ch/gsem/en/research/faculty/all/fabio-trojani/) (University of Geneva and Swiss Finance Institute), <fabio.trojani@unige.ch>
 - [Yucheng Yang](https://sites.google.com/site/yangyucheng1993/home) (University of Zurich and Swiss Finance Institute), <yucheng.yang@uzh.ch>

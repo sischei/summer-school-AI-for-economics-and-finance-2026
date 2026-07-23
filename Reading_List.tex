@@ -1,0 +1,232 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{microtype}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{xcolor}
+
+\definecolor{accent}{HTML}{1A5276}   % deep blue for headings
+\definecolor{linkblue}{HTML}{1A5FB4}  % clickable links
+\definecolor{notegray}{HTML}{454545}  % annotation text
+\definecolor{alertred}{HTML}{C0151B}  % emphasis
+
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=linkblue,
+  urlcolor=linkblue,
+  citecolor=linkblue,
+  pdftitle={Deep Learning Summer School 2026: AI for Economics and Finance -- Reading List},
+  pdfauthor={Deep Learning Summer School 2026}
+}
+
+% --- Section styling -------------------------------------------------------
+\titleformat{\section}{\large\bfseries\color{accent}}{}{0em}{}
+\titlespacing*{\section}{0pt}{1.5em}{0.5em}
+
+\setlist[itemize]{leftmargin=1.4em, itemsep=7pt, topsep=4pt}
+
+% --- A reading entry: {authors (year)}{title}{venue}{url}{note} ------------
+\newcommand{\reading}[5]{%
+  \item #1. \textit{#2}. #3.\ \href{#4}{[link]}%
+}
+
+\newcommand{\bglabel}{\smallskip\noindent\textbf{\color{accent}Recommended background}\par\nopagebreak\smallskip}
+
+% --- A session sub-heading within a day ------------------------------------
+\newcommand{\session}[2]{\smallskip\noindent\textbf{\color{accent}#1}\ {\small\color{notegray}(#2)}\par\nopagebreak\smallskip}
+
+% --- Marker for sessions whose reading list the lecturer will complete ------
+\newcommand{\tbd}{\smallskip\noindent{\small\color{notegray}\textit{Further readings for this session will be added by the lecturer before the school.}}\par\smallskip}
+
+\pagestyle{plain}
+
+\begin{document}
+
+% ===========================================================================
+\begin{center}
+  {\LARGE\bfseries\color{accent} Deep Learning Summer School 2026}\\[3pt]
+  {\large\bfseries on AI for Economics and Finance}\\[10pt]
+  {\Large\bfseries Reading List}\\[8pt]
+  {\normalsize Torino, Italy \quad$\cdot$\quad August 24--26, 2026}
+\end{center}
+
+\vspace{0.4em}
+{\color{accent}\hrule height 1pt}
+\vspace{1.2em}
+
+\noindent
+
+% ===========================================================================
+\section*{Before the Summer School (Pre-Reading \& Pre-Coding)}
+
+{\color{alertred}\textbf{Everyone should complete these two items before arriving in Torino.}}
+
+\begin{itemize}
+  \item \textbf{Coding --- neural networks for economic models.}
+  Simon Scheidegger, tutorials on using neural networks to solve simple Brock--Mirman models (Jupyter notebooks).\\[1.5pt]
+  {\small\color{notegray}Read and run both notebooks:
+  Notebook 1 ---
+  \href{https://github.com/sischei/Deep_Learning_for_Solving_And_Estimating_Dynamic_Economic_Models/blob/main/lectures/lecture_03_deep_equilibrium_nets/code/lecture_03_01_Brock_Mirman_1972_DEQN.ipynb}{deterministic Brock--Mirman},
+  and Notebook 2 ---
+  \href{https://github.com/sischei/Deep_Learning_for_Solving_And_Estimating_Dynamic_Economic_Models/blob/main/lectures/lecture_03_deep_equilibrium_nets/code/lecture_03_02_Brock_Mirman_Uncertainty_DEQN.ipynb}{stochastic Brock--Mirman}. New to Python? Work through the
+  \href{https://github.com/sischei/summer-school-AI-for-economics-and-finance-2026/tree/main/python_refresher}{Python refresher} in this repository first, together with the
+  \href{https://github.com/sischei/summer-school-AI-for-economics-and-finance-2026/blob/main/python_refresher/jupyter_intro.ipynb}{introduction to Jupyter notebooks}.}
+
+  \item \textbf{Reading --- mathematical background.}
+  Marc Peter Deisenroth, A. Aldo Faisal \& Cheng Soon Ong, \textit{Mathematics for Machine Learning}, Cambridge University Press, 2020 (full text free online).
+  \href{https://mml-book.github.io/}{[link]}\\[1.5pt]
+  {\small\color{notegray}Skim \textbf{Chapters 2--5} (linear algebra, analytic geometry, matrix decompositions, vector calculus) and \textbf{Chapter 6} (probability). This is the level of fluency the lectures assume.}
+\end{itemize}
+
+\bglabel
+\begin{itemize}
+  \reading{Goodfellow, Bengio \& Courville (2016)}{Deep Learning}{MIT Press (full text free online)}{https://www.deeplearningbook.org/}{}
+  \item[] {\small\color{notegray}The canonical deep-learning textbook. Skim Part~I and Chapters 6--8 (feedforward networks, regularization, optimization/SGD). Chapter 10 (sequence modelling with recurrent nets) is useful preparation for Days 2 and 3.}
+\end{itemize}
+
+% ===========================================================================
+\section*{Day 1 --- Deep Equilibrium Nets, Deep Surrogates, and Heterogeneous Agents}
+\textit{Simon Scheidegger (University of Lausanne), Yucheng Yang (University of Zurich)}
+\smallskip
+
+\session{Introduction to Deep Equilibrium Nets, and hands-on exercises}{morning}
+
+\begin{itemize}
+  \reading{Azinovic, Gaegauf \& Scheidegger (2022)}{Deep Equilibrium Nets}{International Economic Review 63(4), 1471--1525. Code: \href{https://github.com/sischei/DeepEquilibriumNets}{github.com/\allowbreak sischei/\allowbreak DeepEquilibriumNets}}{https://doi.org/10.1111/iere.12575}{}
+  \item[] {\small\color{notegray}The flagship paper the DEQN lectures are built on: neural networks trained unsupervised to satisfy equilibrium conditions along simulated paths, with heterogeneity, uncertainty, and occasionally binding constraints.}
+  \reading{Scheidegger (2026)}{Deep Learning for Solving and Estimating Dynamic Models in Economics and Finance}{arXiv:2605.14493. Code: \href{https://github.com/sischei/Deep_Learning_for_Solving_And_Estimating_Dynamic_Economic_Models}{github.com/\allowbreak sischei/\allowbreak Deep\_\allowbreak Learning\_\allowbreak for\_\allowbreak Solving\_\allowbreak And\_\allowbreak Estimating\_\allowbreak Dynamic\_\allowbreak Economic\_\allowbreak Models}}{https://arxiv.org/abs/2605.14493}{}
+  \item[] {\small\color{notegray}Lecture-note companion to the whole first half of the school; the hands-on exercises are drawn from this repository.}
+  \reading{Maliar, Maliar \& Winant (2021)}{Deep learning for solving dynamic economic models}{Journal of Monetary Economics 122, 76--101}{https://doi.org/10.1016/j.jmoneco.2021.07.004}{}
+\end{itemize}
+
+\session{Deep Surrogates to Estimate Dynamic Models}{afternoon}
+
+\begin{itemize}
+  \reading{Chen, Didisheim \& Scheidegger (2026)}{Deep Surrogates for Finance: With an Application to Option Pricing}{Journal of Financial Economics 177, 104222}{https://doi.org/10.1016/j.jfineco.2025.104222}{}
+  \item[] {\small\color{notegray}Neural-network surrogates approximate expensive structural models to accelerate estimation by orders of magnitude, here applied to a high-dimensional option pricing model.}
+  \reading{Chen, Cheng, Liu \& Tang (2026)}{Teaching Economics to the Machines}{NBER Working Paper No. 34713}{https://www.nber.org/papers/w34713}{}
+  \item[] {\small\color{notegray}A transfer-learning framework that injects the economic restrictions of a structural model into a machine-learning model: pre-train on synthetic data from the structural model, then fine-tune on empirical data.}
+\end{itemize}
+
+\session{Heterogeneous agent models: DeepHAM and structural reinforcement learning}{afternoon}
+
+\begin{itemize}
+  \reading{Han, Yang \& E (2026)}{DeepHAM: A Global Solution Method for Heterogeneous Agent Models with Aggregate Shocks}{Quantitative Economics 17(2), 297--341. Code: \href{https://github.com/frankhan91/DeepHAM}{github.com/\allowbreak frankhan91/\allowbreak DeepHAM}}{https://doi.org/10.3982/QE2190}{}
+  \item[] {\small\color{notegray}Neural networks approximate value and policy functions and represent the cross-sectional distribution via learned generalized moments. Focus on the moment representation and the simulation-based training objective.}
+  \reading{Yang, Wang, Schaab \& Moll (2025)}{Structural Reinforcement Learning for Heterogeneous Agent Macroeconomics}{arXiv:2512.18892}{https://arxiv.org/abs/2512.18892}{}
+  \item[] {\small\color{notegray}A structural RL method that uses low-dimensional prices as state variables and lets agents learn equilibrium price dynamics from simulated paths (Krusell--Smith, Huggett with aggregate shocks, HANK).}
+\end{itemize}
+
+\bglabel
+\begin{itemize}
+  \reading{Aiyagari (1994)}{Uninsured Idiosyncratic Risk and Aggregate Saving}{Quarterly Journal of Economics 109(3), 659--684}{https://academic.oup.com/qje/article-abstract/109/3/659/1838287}{}
+  \reading{Krusell \& Smith (1998)}{Income and Wealth Heterogeneity in the Macroeconomy}{Journal of Political Economy 106(5), 867--896}{https://doi.org/10.1086/250034}{}
+  \item[] {\small\color{notegray}The classic heterogeneous-agent model with aggregate risk; its curse of dimensionality is exactly what the deep-learning solvers are designed to overcome.}
+  \reading{Judd (1998)}{Numerical Methods in Economics}{MIT Press}{https://mitpress.mit.edu/9780262100717/numerical-methods-in-economics/}{}
+  \reading{Sutton \& Barto (2018)}{Reinforcement Learning: An Introduction}{2nd ed., MIT Press (full text free online)}{http://incompleteideas.net/book/the-book-2nd.html}{}
+\end{itemize}
+
+% ===========================================================================
+\section*{Day 2 --- PDEs, Continuous Time, and the Foundations of Sequence Modelling}
+\textit{Simon Scheidegger (University of Lausanne), Yucheng Yang (University of Zurich), Markus Leippold (University of Zurich)}
+\smallskip
+
+\session{Physics-informed neural networks for solving partial differential equations}{morning}
+
+\begin{itemize}
+  \reading{Raissi, Perdikaris \& Karniadakis (2019)}{Physics-informed neural networks: A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations}{Journal of Computational Physics 378, 686--707}{https://doi.org/10.1016/j.jcp.2018.10.045}{}
+  \item[] {\small\color{notegray}The paper that started the PINN literature. Read Sections 1--3 carefully; the residual-based loss it introduces is the workhorse of the entire continuous-time toolkit.}
+\end{itemize}
+
+\session{Deep learning for continuous-time models}{late morning}
+
+\begin{itemize}
+  \reading{Achdou, Han, Lasry, Lions \& Moll (2022)}{Income and Wealth Distribution in Macroeconomics: A Continuous-Time Approach}{Review of Economic Studies 89(1), 45--86}{https://academic.oup.com/restud/article/89/1/45/6149490}{}
+  \item[] {\small\color{notegray}Recasts the Aiyagari--Bewley--Huggett model in continuous time as coupled HJB and Kolmogorov-forward PDEs, the continuous-time heterogeneous-agent toolkit underlying this session.}
+  \reading{Gu, Lauri\`ere, Merkel \& Payne (2024)}{Global Solutions to Master Equations for Continuous Time Heterogeneous Agent Macroeconomic Models}{arXiv:2406.13726}{https://arxiv.org/abs/2406.13726}{}
+  \item[] {\small\color{notegray}Introduces Economic-Model-Informed Neural Networks (EMINNs) to compute global solutions of master equations, with the continuous-time Krusell--Smith model as the lead application.}
+  \reading{Payne, Rebei \& Yang (2025)}{Deep Learning for Search and Matching Models}{Swiss Finance Institute Research Paper No. 25-05}{https://ideas.repec.org/p/chf/rpseri/rp2505.html}{}
+  \item[] {\small\color{notegray}Extends the deep-learning-for-PDE approach to labor-market models with aggregate shocks and two-sided heterogeneity, and estimates them by simulated method of moments.}
+\end{itemize}
+
+\session{Foundations of Sequence Modelling: From RNNs to Transformers}{afternoon}
+
+\begin{itemize}
+  \reading{Hochreiter \& Schmidhuber (1997)}{Long Short-Term Memory}{Neural Computation 9(8), 1735--1780}{https://doi.org/10.1162/neco.1997.9.8.1735}{}
+  \item[] {\small\color{notegray}The gated recurrent architecture that made long-range dependence learnable, and the baseline against which attention is motivated.}
+  \reading{Vaswani, Shazeer, Parmar, Uszkoreit, Jones, Gomez, Kaiser \& Polosukhin (2017)}{Attention Is All You Need}{Advances in Neural Information Processing Systems 30}{https://arxiv.org/abs/1706.03762}{}
+  \item[] {\small\color{notegray}The Transformer. Everything on Day 3 is a variation on this architecture, so read it before the LLM sessions.}
+\end{itemize}
+\tbd
+
+% ===========================================================================
+\section*{Day 3 --- Large Language Models and Deep Sequence Modelling in Finance}
+\textit{Markus Leippold (University of Zurich), Fabio Trojani (University of Geneva)}
+\smallskip
+
+\session{The LLM Revolution: Scaling Laws and Modern Architectures}{morning}
+
+\begin{itemize}
+  \reading{Devlin, Chang, Lee \& Toutanova (2019)}{BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding}{Proceedings of NAACL-HLT 2019, 4171--4186}{https://arxiv.org/abs/1810.04805}{}
+  \reading{Brown, Mann, Ryder et al. (2020)}{Language Models are Few-Shot Learners}{Advances in Neural Information Processing Systems 33}{https://arxiv.org/abs/2005.14165}{}
+  \item[] {\small\color{notegray}The GPT-3 paper: the counterpart to BERT's encoder paradigm, and the origin of in-context learning.}
+  \reading{Kaplan, McCandlish, Henighan et al. (2020)}{Scaling Laws for Neural Language Models}{arXiv:2001.08361}{https://arxiv.org/abs/2001.08361}{}
+  \item[] {\small\color{notegray}Read alongside \href{https://arxiv.org/abs/2203.15556}{Hoffmann et al. (2022), ``Training Compute-Optimal Large Language Models''} (Chinchilla), which revises the compute-optimal trade-off between model size and data.}
+\end{itemize}
+\tbd
+
+\session{Domain Adaptation: Building Financial \& Climate Intelligence}{late morning}
+
+\begin{itemize}
+  \reading{Hu, Shen, Wallis, Allen-Zhu, Li, Wang, Wang \& Chen (2022)}{LoRA: Low-Rank Adaptation of Large Language Models}{International Conference on Learning Representations (ICLR)}{https://arxiv.org/abs/2106.09685}{}
+  \item[] {\small\color{notegray}The parameter-efficient fine-tuning method used in the hands-on part of this session.}
+  \reading{Webersinke, Kraus, Bingler \& Leippold (2022)}{ClimateBert: A Pretrained Language Model for Climate-Related Text}{Proceedings of the AAAI 2022 Fall Symposium, arXiv:2110.12010. Models: \href{https://huggingface.co/climatebert}{huggingface.co/climatebert}}{https://arxiv.org/abs/2110.12010}{}
+  \item[] {\small\color{notegray}The instructor's own domain-adaptation case study: further pretraining on two million climate-related paragraphs, and what it buys on downstream classification tasks.}
+  \reading{Ouyang, Wu, Jiang et al. (2022)}{Training language models to follow instructions with human feedback}{Advances in Neural Information Processing Systems 35}{https://arxiv.org/abs/2203.02155}{}
+  \item[] {\small\color{notegray}The InstructGPT/RLHF paper. Pair it with \href{https://arxiv.org/abs/2305.18290}{Rafailov et al. (2023), ``Direct Preference Optimization''}, the simpler alignment objective that has largely replaced it in practice.}
+\end{itemize}
+\tbd
+
+\session{Advanced Frontiers: From RAG to Reasoning and Agentic LLMs}{afternoon}
+
+\begin{itemize}
+  \reading{Lewis, Perez, Piktus et al. (2020)}{Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks}{Advances in Neural Information Processing Systems 33}{https://arxiv.org/abs/2005.11401}{}
+  \reading{Vaghefi, Stammbach, Muccione et al. (2023)}{ChatClimate: Grounding conversational AI in climate science}{Communications Earth \& Environment 4, 480}{https://doi.org/10.1038/s43247-023-01084-x}{}
+  \item[] {\small\color{notegray}RAG applied end to end in a domain setting: GPT-4 grounded in the IPCC AR6 report, with the answers evaluated by IPCC authors. The template for the applied part of this session.}
+  \reading{Yao, Zhao, Yu, Du, Shafran, Narasimhan \& Cao (2023)}{ReAct: Synergizing Reasoning and Acting in Language Models}{International Conference on Learning Representations (ICLR)}{https://arxiv.org/abs/2210.03629}{}
+  \item[] {\small\color{notegray}Interleaved reasoning traces and tool calls, the basic loop behind agentic LLMs. Read after \href{https://arxiv.org/abs/2201.11903}{Wei et al. (2022), ``Chain-of-Thought Prompting''}.}
+\end{itemize}
+\tbd
+
+\session{Using Deep Sequence Modelling in Finance}{afternoon}
+
+\begin{itemize}
+  \reading{Gaegauf, Scheidegger \& Trojani (2023)}{A Comprehensive Machine Learning Framework for Dynamic Portfolio Choice With Transaction Costs}{Swiss Finance Institute Research Paper No. 23-114}{https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4543794}{}
+  \item[] {\small\color{notegray}The instructor's own framework: Gaussian-process regression plus Bayesian active learning inside a dynamic programming algorithm, which characterizes the irregular no-trade region and scales to many risky assets.}
+  \reading{Gu, Kelly \& Xiu (2020)}{Empirical Asset Pricing via Machine Learning}{Review of Financial Studies 33(5), 2223--2273}{https://doi.org/10.1093/rfs/hhaa009}{}
+  \item[] {\small\color{notegray}The benchmark comparison of machine-learning methods for return prediction, and the reference point for what deep sequence models must beat.}
+  \reading{Leippold (2023)}{Sentiment spin: Attacking financial sentiment with GPT-3}{Finance Research Letters 55, Part B}{https://doi.org/10.1016/j.frl.2023.103957}{}
+  \item[] {\small\color{notegray}A cautionary counterpart to the LLM sessions: dictionary-based financial sentiment measures can be adversarially manipulated with close to 99\% success, while context-aware models remain robust.}
+\end{itemize}
+\tbd
+
+\bglabel
+\begin{itemize}
+  \reading{Gentzkow, Kelly \& Taddy (2019)}{Text as Data}{Journal of Economic Literature 57(3), 535--574}{https://doi.org/10.1257/jel.20181020}{}
+  \item[] {\small\color{notegray}The standard survey of how economists turn text into data, and the natural bridge from Day 3's methods to empirical work in economics and finance.}
+  \reading{Chen, Pelger \& Zhu (2024)}{Deep Learning in Asset Pricing}{Management Science 70(2), 714--750}{https://doi.org/10.1287/mnsc.2023.4695}{}
+\end{itemize}
+
+\vfill
+\begin{center}
+{\footnotesize\color{notegray}
+Summer School website: \href{https://sites.google.com/carloalberto.org/deeplearningsummerschool2026}{sites.google.com/carloalberto.org/deeplearningsummerschool2026}
+\quad$\cdot$\quad Last updated: \today}
+\end{center}
+
+\end{document}
