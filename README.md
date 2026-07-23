@@ -87,7 +87,7 @@ The lectures will be interactive, in a workshop-like style, using [Python](http:
 ### Class enrollment on the [Nuvolos Cloud](https://nuvolos.cloud/)
 
 * All lecture materials (slides, codes, and further readings) will be distributed via the [Nuvolos Cloud](https://nuvolos.cloud/).
-* To enroll in this class, please click on the enrollment key (**TBA**), and follow the steps.
+* To enroll in this class, please click on the [enrollment key](https://app.eu1.nuvolos.cloud/enroll/class/9t_WlkNEcHk), and follow the steps.
 
 ### What is in this repository
 
