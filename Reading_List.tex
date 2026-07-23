@@ -35,7 +35,19 @@
   \item #1. \textit{#2}. #3.\ \href{#4}{[link]}%
 }
 
-\newcommand{\bglabel}{\smallskip\noindent\textbf{\color{accent}Recommended background}\par\nopagebreak\smallskip}
+% --- A part divider: {title}{subtitle} -------------------------------------
+\newcommand{\parthead}[2]{%
+  \bigskip
+  {\color{accent}\hrule height 1pt}%
+  \vspace{0.5em}
+  \noindent{\Large\bfseries\color{accent}#1}\par\nopagebreak
+  \smallskip
+  \noindent{\small\color{notegray}#2}\par\nopagebreak
+  \medskip
+}
+
+% --- A gray topic gloss under a short heading ------------------------------
+\newcommand{\daygloss}[1]{\noindent{\small\color{notegray}#1}\par\nopagebreak\smallskip}
 
 % --- A session sub-heading within a day ------------------------------------
 \newcommand{\session}[2]{\smallskip\noindent\textbf{\color{accent}#1}\ {\small\color{notegray}(#2)}\par\nopagebreak\smallskip}
@@ -62,6 +74,26 @@
 \noindent
 
 % ===========================================================================
+% Contents
+% ===========================================================================
+\begin{center}
+\begin{minipage}{0.88\textwidth}
+  \noindent\textbf{\color{accent}Contents}\par\smallskip
+  {\small
+  \noindent\textbf{\hyperref[part1]{Part I --- Required reading}}\ {\color{notegray}(read before the session)}\dotfill p.~\pageref{part1}\\[2pt]
+  \hspace*{1.2em}{\color{notegray}\hyperref[pre]{Before the summer school} $\cdot$ \hyperref[day1]{Day 1} $\cdot$ \hyperref[day2]{Day 2} $\cdot$ \hyperref[day3]{Day 3}}\\[6pt]
+  \noindent\textbf{\hyperref[part2]{Part II --- Recommended background}}\ {\color{notegray}(optional)}\dotfill p.~\pageref{part2}\\[2pt]
+  \hspace*{1.2em}{\color{notegray}\hyperref[bg-general]{General} $\cdot$ \hyperref[bg-day1]{Day 1} $\cdot$ \hyperref[bg-day2]{Day 2} $\cdot$ \hyperref[bg-day3]{Day 3}}
+  }
+\end{minipage}
+\end{center}
+
+% ===========================================================================
+\phantomsection\label{part1}
+\parthead{Part I --- Required reading}{These are the papers to read before the corresponding session. One per session, except where a session title names two distinct topics.}
+
+% ===========================================================================
+\phantomsection\label{pre}
 \section*{Before the Summer School (Pre-Reading \& Pre-Coding)}
 
 {\color{alertred}\textbf{Everyone should complete these two items before arriving in Torino.}}
@@ -83,13 +115,8 @@
   {\small\color{notegray}Skim \textbf{Chapters 2--5} (linear algebra, analytic geometry, matrix decompositions, vector calculus) and \textbf{Chapter 6} (probability). This is the level of fluency the lectures assume.}
 \end{itemize}
 
-\bglabel
-\begin{itemize}
-  \reading{Goodfellow, Bengio \& Courville (2016)}{Deep Learning}{MIT Press (full text free online)}{https://www.deeplearningbook.org/}{}
-  \item[] {\small\color{notegray}The canonical deep-learning textbook. Skim Part~I and Chapters 6--8 (feedforward networks, regularization, optimization/SGD). Chapter 10 (sequence modelling with recurrent nets) is useful preparation for Days 2 and 3.}
-\end{itemize}
-
 % ===========================================================================
+\phantomsection\label{day1}
 \section*{Day 1 --- Deep Equilibrium Nets, Deep Surrogates, and Heterogeneous Agents}
 \textit{Simon Scheidegger (University of Lausanne), Yucheng Yang (University of Zurich)}
 \smallskip
@@ -115,20 +142,8 @@
   \item[] {\small\color{notegray}Neural networks approximate value and policy functions and represent the cross-sectional distribution via learned generalized moments. Focus on the moment representation and the simulation-based training objective.}
 \end{itemize}
 
-\bglabel
-\begin{itemize}
-  \reading{Scheidegger (2026)}{Deep Learning for Solving and Estimating Dynamic Models in Economics and Finance}{Textbook treatment, arXiv:2605.14493. Code: \href{https://github.com/sischei/Deep_Learning_for_Solving_And_Estimating_Dynamic_Economic_Models}{github.com/\allowbreak sischei/\allowbreak Deep\_\allowbreak Learning\_\allowbreak for\_\allowbreak Solving\_\allowbreak And\_\allowbreak Estimating\_\allowbreak Dynamic\_\allowbreak Economic\_\allowbreak Models}}{https://arxiv.org/abs/2605.14493}{}
-  \item[] {\small\color{notegray}Book-length treatment of the whole first half of the school, from the basics of deep learning through Deep Equilibrium Nets to deep surrogates for estimation. The natural reference to consult alongside the lectures, and the source of the hands-on exercises.}
-  \reading{Yang, Wang, Schaab \& Moll (2025)}{Structural Reinforcement Learning for Heterogeneous Agent Macroeconomics}{arXiv:2512.18892}{https://arxiv.org/abs/2512.18892}{}
-  \item[] {\small\color{notegray}A structural RL method that uses low-dimensional prices as state variables and lets agents learn equilibrium price dynamics from simulated paths (Krusell--Smith, Huggett with aggregate shocks, HANK).}
-  \reading{Aiyagari (1994)}{Uninsured Idiosyncratic Risk and Aggregate Saving}{Quarterly Journal of Economics 109(3), 659--684}{https://academic.oup.com/qje/article-abstract/109/3/659/1838287}{}
-  \reading{Krusell \& Smith (1998)}{Income and Wealth Heterogeneity in the Macroeconomy}{Journal of Political Economy 106(5), 867--896}{https://doi.org/10.1086/250034}{}
-  \item[] {\small\color{notegray}The classic heterogeneous-agent model with aggregate risk; its curse of dimensionality is exactly what the deep-learning solvers are designed to overcome.}
-  \reading{Judd (1998)}{Numerical Methods in Economics}{MIT Press}{https://mitpress.mit.edu/9780262100717/numerical-methods-in-economics/}{}
-  \reading{Sutton \& Barto (2018)}{Reinforcement Learning: An Introduction}{2nd ed., MIT Press (full text free online)}{http://incompleteideas.net/book/the-book-2nd.html}{}
-\end{itemize}
-
 % ===========================================================================
+\phantomsection\label{day2}
 \section*{Day 2 --- PDEs, Continuous Time, and the Foundations of Sequence Modelling}
 \textit{Simon Scheidegger (University of Lausanne), Yucheng Yang (University of Zurich), Markus Leippold (University of Zurich)}
 \smallskip
@@ -155,21 +170,8 @@
 \end{itemize}
 \tbd
 
-\bglabel
-\begin{itemize}
-  \reading{Achdou, Han, Lasry, Lions \& Moll (2022)}{Income and Wealth Distribution in Macroeconomics: A Continuous-Time Approach}{Review of Economic Studies 89(1), 45--86}{https://academic.oup.com/restud/article/89/1/45/6149490}{}
-  \item[] {\small\color{notegray}Recasts the Aiyagari--Bewley--Huggett model in continuous time as coupled HJB and Kolmogorov-forward PDEs, the continuous-time heterogeneous-agent toolkit underlying this day.}
-  \reading{Gu, Lauri\`ere, Merkel \& Payne (2024)}{Global Solutions to Master Equations for Continuous Time Heterogeneous Agent Macroeconomic Models}{arXiv:2406.13726}{https://arxiv.org/abs/2406.13726}{}
-  \item[] {\small\color{notegray}Introduces Economic-Model-Informed Neural Networks (EMINNs) to compute global solutions of master equations, with the continuous-time Krusell--Smith model as the lead application.}
-  \reading{Brunnermeier \& Sannikov (2014)}{A Macroeconomic Model with a Financial Sector}{American Economic Review 104(2), 379--421}{https://www.aeaweb.org/articles?id=10.1257/aer.104.2.379}{}
-  \item[] {\small\color{notegray}The foundational continuous-time macro-finance model with a financial sector; its full nonlinear crisis dynamics are the canonical problem class these solvers target.}
-  \reading{Karniadakis, Kevrekidis, Lu, Perdikaris, Wang \& Yang (2021)}{Physics-informed machine learning}{Nature Reviews Physics 3, 422--440}{https://doi.org/10.1038/s42254-021-00314-5}{}
-  \item[] {\small\color{notegray}A survey of the PINN literature two years on, useful for placing the morning session in a wider context.}
-  \reading{Hochreiter \& Schmidhuber (1997)}{Long Short-Term Memory}{Neural Computation 9(8), 1735--1780}{https://doi.org/10.1162/neco.1997.9.8.1735}{}
-  \item[] {\small\color{notegray}The gated recurrent architecture that made long-range dependence learnable, and the baseline against which attention is motivated.}
-\end{itemize}
-
 % ===========================================================================
+\phantomsection\label{day3}
 \section*{Day 3 --- Large Language Models and Deep Sequence Modelling in Finance}
 \textit{Markus Leippold (University of Zurich), Fabio Trojani (University of Geneva)}
 \smallskip
@@ -208,7 +210,60 @@
 \end{itemize}
 \tbd
 
-\bglabel
+% ===========================================================================
+\clearpage
+\phantomsection\label{part2}
+\parthead{Part II --- Recommended background}{Optional. These add depth and context, and are not required to follow the sessions. Pick from them according to your interests and prior training.}
+
+% ===========================================================================
+\phantomsection\label{bg-general}
+\section*{General}
+
+\begin{itemize}
+  \reading{Goodfellow, Bengio \& Courville (2016)}{Deep Learning}{MIT Press (full text free online)}{https://www.deeplearningbook.org/}{}
+  \item[] {\small\color{notegray}The canonical deep-learning textbook. Skim Part~I and Chapters 6--8 (feedforward networks, regularization, optimization/SGD). Chapter 10 (sequence modelling with recurrent nets) is useful preparation for Days 2 and 3.}
+\end{itemize}
+
+% ===========================================================================
+\phantomsection\label{bg-day1}
+\section*{Day 1}
+\daygloss{Deep Equilibrium Nets, deep surrogates, and heterogeneous agents.}
+
+\begin{itemize}
+  \reading{Scheidegger (2026)}{Deep Learning for Solving and Estimating Dynamic Models in Economics and Finance}{Textbook treatment, arXiv:2605.14493. Code: \href{https://github.com/sischei/Deep_Learning_for_Solving_And_Estimating_Dynamic_Economic_Models}{github.com/\allowbreak sischei/\allowbreak Deep\_\allowbreak Learning\_\allowbreak for\_\allowbreak Solving\_\allowbreak And\_\allowbreak Estimating\_\allowbreak Dynamic\_\allowbreak Economic\_\allowbreak Models}}{https://arxiv.org/abs/2605.14493}{}
+  \item[] {\small\color{notegray}Book-length treatment of the whole first half of the school, from the basics of deep learning through Deep Equilibrium Nets to deep surrogates for estimation. The natural reference to consult alongside the lectures, and the source of the hands-on exercises.}
+  \reading{Yang, Wang, Schaab \& Moll (2025)}{Structural Reinforcement Learning for Heterogeneous Agent Macroeconomics}{arXiv:2512.18892}{https://arxiv.org/abs/2512.18892}{}
+  \item[] {\small\color{notegray}A structural RL method that uses low-dimensional prices as state variables and lets agents learn equilibrium price dynamics from simulated paths (Krusell--Smith, Huggett with aggregate shocks, HANK).}
+  \reading{Aiyagari (1994)}{Uninsured Idiosyncratic Risk and Aggregate Saving}{Quarterly Journal of Economics 109(3), 659--684}{https://academic.oup.com/qje/article-abstract/109/3/659/1838287}{}
+  \reading{Krusell \& Smith (1998)}{Income and Wealth Heterogeneity in the Macroeconomy}{Journal of Political Economy 106(5), 867--896}{https://doi.org/10.1086/250034}{}
+  \item[] {\small\color{notegray}The classic heterogeneous-agent model with aggregate risk; its curse of dimensionality is exactly what the deep-learning solvers are designed to overcome.}
+  \reading{Judd (1998)}{Numerical Methods in Economics}{MIT Press}{https://mitpress.mit.edu/9780262100717/numerical-methods-in-economics/}{}
+  \reading{Sutton \& Barto (2018)}{Reinforcement Learning: An Introduction}{2nd ed., MIT Press (full text free online)}{http://incompleteideas.net/book/the-book-2nd.html}{}
+\end{itemize}
+
+% ===========================================================================
+\phantomsection\label{bg-day2}
+\section*{Day 2}
+\daygloss{PDEs, continuous time, and the foundations of sequence modelling.}
+
+\begin{itemize}
+  \reading{Achdou, Han, Lasry, Lions \& Moll (2022)}{Income and Wealth Distribution in Macroeconomics: A Continuous-Time Approach}{Review of Economic Studies 89(1), 45--86}{https://academic.oup.com/restud/article/89/1/45/6149490}{}
+  \item[] {\small\color{notegray}Recasts the Aiyagari--Bewley--Huggett model in continuous time as coupled HJB and Kolmogorov-forward PDEs, the continuous-time heterogeneous-agent toolkit underlying this day.}
+  \reading{Gu, Lauri\`ere, Merkel \& Payne (2024)}{Global Solutions to Master Equations for Continuous Time Heterogeneous Agent Macroeconomic Models}{arXiv:2406.13726}{https://arxiv.org/abs/2406.13726}{}
+  \item[] {\small\color{notegray}Introduces Economic-Model-Informed Neural Networks (EMINNs) to compute global solutions of master equations, with the continuous-time Krusell--Smith model as the lead application.}
+  \reading{Brunnermeier \& Sannikov (2014)}{A Macroeconomic Model with a Financial Sector}{American Economic Review 104(2), 379--421}{https://www.aeaweb.org/articles?id=10.1257/aer.104.2.379}{}
+  \item[] {\small\color{notegray}The foundational continuous-time macro-finance model with a financial sector; its full nonlinear crisis dynamics are the canonical problem class these solvers target.}
+  \reading{Karniadakis, Kevrekidis, Lu, Perdikaris, Wang \& Yang (2021)}{Physics-informed machine learning}{Nature Reviews Physics 3, 422--440}{https://doi.org/10.1038/s42254-021-00314-5}{}
+  \item[] {\small\color{notegray}A survey of the PINN literature two years on, useful for placing the morning session in a wider context.}
+  \reading{Hochreiter \& Schmidhuber (1997)}{Long Short-Term Memory}{Neural Computation 9(8), 1735--1780}{https://doi.org/10.1162/neco.1997.9.8.1735}{}
+  \item[] {\small\color{notegray}The gated recurrent architecture that made long-range dependence learnable, and the baseline against which attention is motivated.}
+\end{itemize}
+
+% ===========================================================================
+\phantomsection\label{bg-day3}
+\section*{Day 3}
+\daygloss{Large language models and deep sequence modelling in finance.}
+
 \begin{itemize}
   \reading{Devlin, Chang, Lee \& Toutanova (2019)}{BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding}{Proceedings of NAACL-HLT 2019, 4171--4186}{https://arxiv.org/abs/1810.04805}{}
   \item[] {\small\color{notegray}The encoder counterpart to GPT, and the architecture ClimateBert is built on.}
