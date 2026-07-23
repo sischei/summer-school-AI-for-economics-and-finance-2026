@@ -113,14 +113,14 @@
 \begin{itemize}
   \reading{Han, Yang \& E (2026)}{DeepHAM: A Global Solution Method for Heterogeneous Agent Models with Aggregate Shocks}{Quantitative Economics 17(2), 297--341. Code: \href{https://github.com/frankhan91/DeepHAM}{github.com/\allowbreak frankhan91/\allowbreak DeepHAM}}{https://doi.org/10.3982/QE2190}{}
   \item[] {\small\color{notegray}Neural networks approximate value and policy functions and represent the cross-sectional distribution via learned generalized moments. Focus on the moment representation and the simulation-based training objective.}
-  \reading{Yang, Wang, Schaab \& Moll (2025)}{Structural Reinforcement Learning for Heterogeneous Agent Macroeconomics}{arXiv:2512.18892}{https://arxiv.org/abs/2512.18892}{}
-  \item[] {\small\color{notegray}A structural RL method that uses low-dimensional prices as state variables and lets agents learn equilibrium price dynamics from simulated paths (Krusell--Smith, Huggett with aggregate shocks, HANK).}
 \end{itemize}
 
 \bglabel
 \begin{itemize}
   \reading{Scheidegger (2026)}{Deep Learning for Solving and Estimating Dynamic Models in Economics and Finance}{Textbook treatment, arXiv:2605.14493. Code: \href{https://github.com/sischei/Deep_Learning_for_Solving_And_Estimating_Dynamic_Economic_Models}{github.com/\allowbreak sischei/\allowbreak Deep\_\allowbreak Learning\_\allowbreak for\_\allowbreak Solving\_\allowbreak And\_\allowbreak Estimating\_\allowbreak Dynamic\_\allowbreak Economic\_\allowbreak Models}}{https://arxiv.org/abs/2605.14493}{}
   \item[] {\small\color{notegray}Book-length treatment of the whole first half of the school, from the basics of deep learning through Deep Equilibrium Nets to deep surrogates for estimation. The natural reference to consult alongside the lectures, and the source of the hands-on exercises.}
+  \reading{Yang, Wang, Schaab \& Moll (2025)}{Structural Reinforcement Learning for Heterogeneous Agent Macroeconomics}{arXiv:2512.18892}{https://arxiv.org/abs/2512.18892}{}
+  \item[] {\small\color{notegray}A structural RL method that uses low-dimensional prices as state variables and lets agents learn equilibrium price dynamics from simulated paths (Krusell--Smith, Huggett with aggregate shocks, HANK).}
   \reading{Aiyagari (1994)}{Uninsured Idiosyncratic Risk and Aggregate Saving}{Quarterly Journal of Economics 109(3), 659--684}{https://academic.oup.com/qje/article-abstract/109/3/659/1838287}{}
   \reading{Krusell \& Smith (1998)}{Income and Wealth Heterogeneity in the Macroeconomy}{Journal of Political Economy 106(5), 867--896}{https://doi.org/10.1086/250034}{}
   \item[] {\small\color{notegray}The classic heterogeneous-agent model with aggregate risk; its curse of dimensionality is exactly what the deep-learning solvers are designed to overcome.}
@@ -143,23 +143,31 @@
 \session{Deep learning for continuous-time models}{late morning}
 
 \begin{itemize}
-  \reading{Achdou, Han, Lasry, Lions \& Moll (2022)}{Income and Wealth Distribution in Macroeconomics: A Continuous-Time Approach}{Review of Economic Studies 89(1), 45--86}{https://academic.oup.com/restud/article/89/1/45/6149490}{}
-  \item[] {\small\color{notegray}Recasts the Aiyagari--Bewley--Huggett model in continuous time as coupled HJB and Kolmogorov-forward PDEs, the continuous-time heterogeneous-agent toolkit underlying this session.}
-  \reading{Gu, Lauri\`ere, Merkel \& Payne (2024)}{Global Solutions to Master Equations for Continuous Time Heterogeneous Agent Macroeconomic Models}{arXiv:2406.13726}{https://arxiv.org/abs/2406.13726}{}
-  \item[] {\small\color{notegray}Introduces Economic-Model-Informed Neural Networks (EMINNs) to compute global solutions of master equations, with the continuous-time Krusell--Smith model as the lead application.}
   \reading{Payne, Rebei \& Yang (2025)}{Deep Learning for Search and Matching Models}{Swiss Finance Institute Research Paper No. 25-05}{https://ideas.repec.org/p/chf/rpseri/rp2505.html}{}
-  \item[] {\small\color{notegray}Extends the deep-learning-for-PDE approach to labor-market models with aggregate shocks and two-sided heterogeneity, and estimates them by simulated method of moments.}
+  \item[] {\small\color{notegray}The lecturer's own work: characterizes general equilibrium as a high-dimensional PDE with the distribution as a state variable, then solves it by deep learning and estimates it by simulated method of moments.}
 \end{itemize}
 
 \session{Foundations of Sequence Modelling: From RNNs to Transformers}{afternoon}
 
 \begin{itemize}
-  \reading{Hochreiter \& Schmidhuber (1997)}{Long Short-Term Memory}{Neural Computation 9(8), 1735--1780}{https://doi.org/10.1162/neco.1997.9.8.1735}{}
-  \item[] {\small\color{notegray}The gated recurrent architecture that made long-range dependence learnable, and the baseline against which attention is motivated.}
   \reading{Vaswani, Shazeer, Parmar, Uszkoreit, Jones, Gomez, Kaiser \& Polosukhin (2017)}{Attention Is All You Need}{Advances in Neural Information Processing Systems 30}{https://arxiv.org/abs/1706.03762}{}
   \item[] {\small\color{notegray}The Transformer. Everything on Day 3 is a variation on this architecture, so read it before the LLM sessions.}
 \end{itemize}
 \tbd
+
+\bglabel
+\begin{itemize}
+  \reading{Achdou, Han, Lasry, Lions \& Moll (2022)}{Income and Wealth Distribution in Macroeconomics: A Continuous-Time Approach}{Review of Economic Studies 89(1), 45--86}{https://academic.oup.com/restud/article/89/1/45/6149490}{}
+  \item[] {\small\color{notegray}Recasts the Aiyagari--Bewley--Huggett model in continuous time as coupled HJB and Kolmogorov-forward PDEs, the continuous-time heterogeneous-agent toolkit underlying this day.}
+  \reading{Gu, Lauri\`ere, Merkel \& Payne (2024)}{Global Solutions to Master Equations for Continuous Time Heterogeneous Agent Macroeconomic Models}{arXiv:2406.13726}{https://arxiv.org/abs/2406.13726}{}
+  \item[] {\small\color{notegray}Introduces Economic-Model-Informed Neural Networks (EMINNs) to compute global solutions of master equations, with the continuous-time Krusell--Smith model as the lead application.}
+  \reading{Brunnermeier \& Sannikov (2014)}{A Macroeconomic Model with a Financial Sector}{American Economic Review 104(2), 379--421}{https://www.aeaweb.org/articles?id=10.1257/aer.104.2.379}{}
+  \item[] {\small\color{notegray}The foundational continuous-time macro-finance model with a financial sector; its full nonlinear crisis dynamics are the canonical problem class these solvers target.}
+  \reading{Karniadakis, Kevrekidis, Lu, Perdikaris, Wang \& Yang (2021)}{Physics-informed machine learning}{Nature Reviews Physics 3, 422--440}{https://doi.org/10.1038/s42254-021-00314-5}{}
+  \item[] {\small\color{notegray}A survey of the PINN literature two years on, useful for placing the morning session in a wider context.}
+  \reading{Hochreiter \& Schmidhuber (1997)}{Long Short-Term Memory}{Neural Computation 9(8), 1735--1780}{https://doi.org/10.1162/neco.1997.9.8.1735}{}
+  \item[] {\small\color{notegray}The gated recurrent architecture that made long-range dependence learnable, and the baseline against which attention is motivated.}
+\end{itemize}
 
 % ===========================================================================
 \section*{Day 3 --- Large Language Models and Deep Sequence Modelling in Finance}
@@ -169,34 +177,26 @@
 \session{The LLM Revolution: Scaling Laws and Modern Architectures}{morning}
 
 \begin{itemize}
-  \reading{Devlin, Chang, Lee \& Toutanova (2019)}{BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding}{Proceedings of NAACL-HLT 2019, 4171--4186}{https://arxiv.org/abs/1810.04805}{}
   \reading{Brown, Mann, Ryder et al. (2020)}{Language Models are Few-Shot Learners}{Advances in Neural Information Processing Systems 33}{https://arxiv.org/abs/2005.14165}{}
-  \item[] {\small\color{notegray}The GPT-3 paper: the counterpart to BERT's encoder paradigm, and the origin of in-context learning.}
+  \item[] {\small\color{notegray}The GPT-3 paper, and the origin of in-context learning.}
   \reading{Kaplan, McCandlish, Henighan et al. (2020)}{Scaling Laws for Neural Language Models}{arXiv:2001.08361}{https://arxiv.org/abs/2001.08361}{}
-  \item[] {\small\color{notegray}Read alongside \href{https://arxiv.org/abs/2203.15556}{Hoffmann et al. (2022), ``Training Compute-Optimal Large Language Models''} (Chinchilla), which revises the compute-optimal trade-off between model size and data.}
+  \item[] {\small\color{notegray}The empirical power laws relating loss to model size, data, and compute, which is what makes the scaling half of this session go.}
 \end{itemize}
 \tbd
 
 \session{Domain Adaptation: Building Financial \& Climate Intelligence}{late morning}
 
 \begin{itemize}
-  \reading{Hu, Shen, Wallis, Allen-Zhu, Li, Wang, Wang \& Chen (2022)}{LoRA: Low-Rank Adaptation of Large Language Models}{International Conference on Learning Representations (ICLR)}{https://arxiv.org/abs/2106.09685}{}
-  \item[] {\small\color{notegray}The parameter-efficient fine-tuning method used in the hands-on part of this session.}
   \reading{Webersinke, Kraus, Bingler \& Leippold (2022)}{ClimateBert: A Pretrained Language Model for Climate-Related Text}{Proceedings of the AAAI 2022 Fall Symposium, arXiv:2110.12010. Models: \href{https://huggingface.co/climatebert}{huggingface.co/climatebert}}{https://arxiv.org/abs/2110.12010}{}
   \item[] {\small\color{notegray}The instructor's own domain-adaptation case study: further pretraining on two million climate-related paragraphs, and what it buys on downstream classification tasks.}
-  \reading{Ouyang, Wu, Jiang et al. (2022)}{Training language models to follow instructions with human feedback}{Advances in Neural Information Processing Systems 35}{https://arxiv.org/abs/2203.02155}{}
-  \item[] {\small\color{notegray}The InstructGPT/RLHF paper. Pair it with \href{https://arxiv.org/abs/2305.18290}{Rafailov et al. (2023), ``Direct Preference Optimization''}, the simpler alignment objective that has largely replaced it in practice.}
 \end{itemize}
 \tbd
 
 \session{Advanced Frontiers: From RAG to Reasoning and Agentic LLMs}{afternoon}
 
 \begin{itemize}
-  \reading{Lewis, Perez, Piktus et al. (2020)}{Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks}{Advances in Neural Information Processing Systems 33}{https://arxiv.org/abs/2005.11401}{}
   \reading{Vaghefi, Stammbach, Muccione et al. (2023)}{ChatClimate: Grounding conversational AI in climate science}{Communications Earth \& Environment 4, 480}{https://doi.org/10.1038/s43247-023-01084-x}{}
-  \item[] {\small\color{notegray}RAG applied end to end in a domain setting: GPT-4 grounded in the IPCC AR6 report, with the answers evaluated by IPCC authors. The template for the applied part of this session.}
-  \reading{Yao, Zhao, Yu, Du, Shafran, Narasimhan \& Cao (2023)}{ReAct: Synergizing Reasoning and Acting in Language Models}{International Conference on Learning Representations (ICLR)}{https://arxiv.org/abs/2210.03629}{}
-  \item[] {\small\color{notegray}Interleaved reasoning traces and tool calls, the basic loop behind agentic LLMs. Read after \href{https://arxiv.org/abs/2201.11903}{Wei et al. (2022), ``Chain-of-Thought Prompting''}.}
+  \item[] {\small\color{notegray}Retrieval-augmented generation applied end to end in a domain setting: GPT-4 grounded in the IPCC AR6 report, with the answers evaluated by IPCC authors. The template for the applied part of this session.}
 \end{itemize}
 \tbd
 
@@ -205,13 +205,28 @@
 \begin{itemize}
   \reading{Gu, Kelly \& Xiu (2020)}{Empirical Asset Pricing via Machine Learning}{Review of Financial Studies 33(5), 2223--2273}{https://doi.org/10.1093/rfs/hhaa009}{}
   \item[] {\small\color{notegray}The benchmark comparison of machine-learning methods for return prediction, and the reference point for what deep sequence models must beat.}
-  \reading{Leippold (2023)}{Sentiment spin: Attacking financial sentiment with GPT-3}{Finance Research Letters 55, Part B}{https://doi.org/10.1016/j.frl.2023.103957}{}
-  \item[] {\small\color{notegray}A cautionary counterpart to the LLM sessions: dictionary-based financial sentiment measures can be adversarially manipulated with close to 99\% success, while context-aware models remain robust.}
 \end{itemize}
 \tbd
 
 \bglabel
 \begin{itemize}
+  \reading{Devlin, Chang, Lee \& Toutanova (2019)}{BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding}{Proceedings of NAACL-HLT 2019, 4171--4186}{https://arxiv.org/abs/1810.04805}{}
+  \item[] {\small\color{notegray}The encoder counterpart to GPT, and the architecture ClimateBert is built on.}
+  \reading{Hoffmann, Borgeaud, Mensch et al. (2022)}{Training Compute-Optimal Large Language Models}{arXiv:2203.15556}{https://arxiv.org/abs/2203.15556}{}
+  \item[] {\small\color{notegray}The Chinchilla paper, which revises Kaplan et al.'s compute-optimal trade-off between model size and training data.}
+  \reading{Hu, Shen, Wallis, Allen-Zhu, Li, Wang, Wang \& Chen (2022)}{LoRA: Low-Rank Adaptation of Large Language Models}{International Conference on Learning Representations (ICLR)}{https://arxiv.org/abs/2106.09685}{}
+  \item[] {\small\color{notegray}The parameter-efficient fine-tuning method behind the domain-adaptation session.}
+  \reading{Ouyang, Wu, Jiang et al. (2022)}{Training language models to follow instructions with human feedback}{Advances in Neural Information Processing Systems 35}{https://arxiv.org/abs/2203.02155}{}
+  \item[] {\small\color{notegray}The InstructGPT/RLHF paper.}
+  \reading{Rafailov, Sharma, Mitchell, Ermon, Manning \& Finn (2023)}{Direct Preference Optimization: Your Language Model is Secretly a Reward Model}{Advances in Neural Information Processing Systems 36}{https://arxiv.org/abs/2305.18290}{}
+  \item[] {\small\color{notegray}The simpler alignment objective that has largely replaced RLHF in practice.}
+  \reading{Lewis, Perez, Piktus et al. (2020)}{Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks}{Advances in Neural Information Processing Systems 33}{https://arxiv.org/abs/2005.11401}{}
+  \item[] {\small\color{notegray}The original RAG architecture that ChatClimate applies.}
+  \reading{Wei, Wang, Schuurmans et al. (2022)}{Chain-of-Thought Prompting Elicits Reasoning in Large Language Models}{Advances in Neural Information Processing Systems 35}{https://arxiv.org/abs/2201.11903}{}
+  \reading{Yao, Zhao, Yu, Du, Shafran, Narasimhan \& Cao (2023)}{ReAct: Synergizing Reasoning and Acting in Language Models}{International Conference on Learning Representations (ICLR)}{https://arxiv.org/abs/2210.03629}{}
+  \item[] {\small\color{notegray}Interleaved reasoning traces and tool calls, the basic loop behind agentic LLMs.}
+  \reading{Leippold (2023)}{Sentiment spin: Attacking financial sentiment with GPT-3}{Finance Research Letters 55, Part B}{https://doi.org/10.1016/j.frl.2023.103957}{}
+  \item[] {\small\color{notegray}A cautionary counterpart to the LLM sessions: dictionary-based financial sentiment measures can be adversarially manipulated with close to 99\% success, while context-aware models remain robust.}
   \reading{Gentzkow, Kelly \& Taddy (2019)}{Text as Data}{Journal of Economic Literature 57(3), 535--574}{https://doi.org/10.1257/jel.20181020}{}
   \item[] {\small\color{notegray}The standard survey of how economists turn text into data, and the natural bridge from Day 3's methods to empirical work in economics and finance.}
   \reading{Chen, Pelger \& Zhu (2024)}{Deep Learning in Asset Pricing}{Management Science 70(2), 714--750}{https://doi.org/10.1287/mnsc.2023.4695}{}
