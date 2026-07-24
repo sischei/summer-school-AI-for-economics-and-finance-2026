@@ -38,7 +38,7 @@ Summer School on [AI for Economics and Finance](https://sites.google.com/carloal
 
 * The summer school is designed to equip Ph.D. students and researchers in economics, finance, and related fields with the computational tools that are rapidly transforming modern economic and financial research.
 * By integrating **applied mathematics**, **machine learning**, and **computational economics**, the lectures provide a deep dive into two complementary frontiers: solving and estimating complex dynamic stochastic models, and leveraging **artificial intelligence**, **natural language processing**, and **large language models** to tackle empirical questions in economics and finance.
-* The format of the lectures is interactive and workshop-like, combining theoretical discussions with guided, hands-on coding exercises, complemented by an **industry talk**.
+* The format of the lectures is interactive and workshop-like, combining theoretical discussions with guided, hands-on coding exercises, complemented by a **panel discussion** on large language models and AI agents in finance research.
 * The coding is conducted in Python and implemented on the cloud computing infrastructure [Nuvolos](https://nuvolos.com), so that no local setup is required.
 
 ### Core pillars of the program
@@ -129,8 +129,6 @@ Lecture materials are added as the summer school approaches, and are also distri
 11:00 - 12:30 | [Deep Learning for continuous-time models](day2/Yang/slides) | Yang
 12:30 - 13:30 | Lunch Break
 13:30 - 15:00 | [Foundations of Sequence Modelling: From RNNs to Transformers](day2/Leippold/slides) | Leippold
-15:00 - 15:30 | Coffee Break
-15:30 - 17:00 | Industry Talk | TBD
 19:00 - | Informal Aperitivo/Drinks (self-organized and self-funded gathering for an aperitivo or drinks).
 
 ### [Day 3](day3), Wednesday, August 26th, 2026
@@ -148,6 +146,8 @@ Lecture materials are added as the summer school approaches, and are also distri
 ### The conference, August 27 - 28, 2026
 
 Directly following the summer school, the *Deep Learning for Dynamic Stochastic Models* conference brings together scholars and practitioners working on high-dimensional, nonlinear, and stochastic models. The program features invited talks, contributed presentations, and panel discussions. See the [conference program](https://sites.google.com/carloalberto.org/deeplearningsummerschool2026/conference-program) for details.
+
+**Panel discussion**, Thursday, August 27th, 2026, 17:15 - 18:15, at Collegio Carlo Alberto, Piazza Arbarello 8 (note that this is *not* the summer school venue): [Challenges and opportunities for finance research in the era of large language models and AI agents](https://www.carloalberto.org/event/challenges-and-opportunities-for-finance-research-in-the-era-of-large-language-models-and-ai-agents/), a side initiative of the summer school organized by the ESOMAS Department and Collegio Carlo Alberto, with Markus Leippold, Simon Scheidegger, [Florian Oswald](https://floswald.github.io/) (University of Turin and Collegio Carlo Alberto, Data Editor of the *Journal of Political Economy*), and Fabio Trojani. Register [in person](https://www.eventbrite.it/e/challenges-and-opportunities-for-finance-research-in-the-era-of-large-llms-tickets-1994646487338?aff=oddtdtcreator) or [online](https://us02web.zoom.us/webinar/register/WN_WOilegCBQMmKmp751CI15Q).
 
 
 ## Practical information
