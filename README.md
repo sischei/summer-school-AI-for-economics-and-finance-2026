@@ -147,7 +147,13 @@ Lecture materials are added as the summer school approaches, and are also distri
 
 Directly following the summer school, the *Deep Learning for Dynamic Stochastic Models* conference brings together scholars and practitioners working on high-dimensional, nonlinear, and stochastic models. The program features invited talks, contributed presentations, and panel discussions. See the [conference program](https://sites.google.com/carloalberto.org/deeplearningsummerschool2026/conference-program) for details.
 
-**Panel discussion**, Thursday, August 27th, 2026, 17:15 - 18:15, at Collegio Carlo Alberto, Piazza Arbarello 8 (note that this is *not* the summer school venue): [Challenges and opportunities for finance research in the era of large language models and AI agents](https://www.carloalberto.org/event/challenges-and-opportunities-for-finance-research-in-the-era-of-large-language-models-and-ai-agents/), a side initiative of the summer school organized by the ESOMAS Department and Collegio Carlo Alberto, with Markus Leippold, Simon Scheidegger, [Florian Oswald](https://floswald.github.io/) (University of Turin and Collegio Carlo Alberto, Data Editor of the *Journal of Political Economy*), and Fabio Trojani. Register [in person](https://www.eventbrite.it/e/challenges-and-opportunities-for-finance-research-in-the-era-of-large-llms-tickets-1994646487338?aff=oddtdtcreator) or [online](https://us02web.zoom.us/webinar/register/WN_WOilegCBQMmKmp751CI15Q).
+Thursday, August 27th, 2026:
+
+ **Time** | **Main Topics** | **Speakers**
+------|------|------
+17:15 - 18:15 | [Panel discussion: Challenges and opportunities for finance research in the era of large language models and AI agents](https://www.carloalberto.org/event/challenges-and-opportunities-for-finance-research-in-the-era-of-large-language-models-and-ai-agents/) | Leippold, Oswald, Scheidegger, Trojani
+
+The panel is a side initiative of the summer school, organized by the ESOMAS Department and Collegio Carlo Alberto. It takes place at Collegio Carlo Alberto, Piazza Arbarello 8, which is *not* the summer school venue. Register [in person](https://www.eventbrite.it/e/challenges-and-opportunities-for-finance-research-in-the-era-of-large-llms-tickets-1994646487338?aff=oddtdtcreator) or [online](https://us02web.zoom.us/webinar/register/WN_WOilegCBQMmKmp751CI15Q).
 
 
 ## Practical information
