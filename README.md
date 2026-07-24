@@ -209,6 +209,13 @@ Tickets and info:
 - [Fabio Trojani](https://www.unige.ch/gsem/en/research/faculty/all/fabio-trojani/) (University of Geneva and Swiss Finance Institute), <fabio.trojani@unige.ch>
 - [Yucheng Yang](https://sites.google.com/site/yangyucheng1993/home) (University of Zurich and Swiss Finance Institute), <yucheng.yang@uzh.ch>
 
+### Panelists
+
+- [Markus Leippold](https://www.df.uzh.ch/en/people/professor/leippold.html) (University of Zurich and Swiss Finance Institute)
+- [Florian Oswald](https://floswald.github.io/) (University of Turin and Collegio Carlo Alberto), Data Editor of the *Journal of Political Economy*
+- [Simon Scheidegger](https://sites.google.com/site/simonscheidegger/) (University of Lausanne and Grantham Research Institute, London School of Economics)
+- [Fabio Trojani](https://www.unige.ch/gsem/en/research/faculty/all/fabio-trojani/) (University of Geneva and Swiss Finance Institute)
+
 ### Co-academic directors
 
 - [Simon Scheidegger](https://sites.google.com/site/simonscheidegger/) (University of Lausanne and Grantham Research Institute, London School of Economics)
