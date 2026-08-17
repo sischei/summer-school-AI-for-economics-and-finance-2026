@@ -117,7 +117,7 @@ Lecture materials are added as the summer school approaches, and are also distri
 12:30 - 13:30 | Lunch Break
 13:30 - 15:00 | [Deep Surrogates to Estimate Dynamic Models](day1/Scheidegger/slides) | Scheidegger
 15:00 - 15:30 | Coffee Break
-15:30 - 17:00 | Solving heterogeneous agent models with DeepHAM and structural reinforcement learning | Yang
+15:30 - 17:00 | [Solving heterogeneous agent models with DeepHAM and structural reinforcement learning](day1/Yang/slides) | Yang
 19:00 - | Pizza Dinner
 
 ### [Day 2](day2), Tuesday, August 25th, 2026
@@ -128,7 +128,9 @@ Lecture materials are added as the summer school approaches, and are also distri
 10:30 - 11:00 | Coffee Break
 11:00 - 12:30 | [Deep Learning for continuous-time models](day2/Yang/slides) | Yang
 12:30 - 13:30 | Lunch Break
-13:30 - 15:00 | [Foundations of Sequence Modelling: From RNNs to Transformers](day2/Leippold/slides) | Leippold
+13:30 - 15:00 | [Gaussian Processes for Dynamic Portfolio Optimization](day2/Trojani/slides) | Trojani
+15:00 - 15:30 | Coffee Break
+15:30 - 17:00 | [Foundations of Sequence Modelling: From RNNs to Transformers](day2/Leippold/slides) | Leippold
 19:00 - | Informal Aperitivo/Drinks (self-organized and self-funded gathering for an aperitivo or drinks).
 
 ### [Day 3](day3), Wednesday, August 26th, 2026
@@ -141,7 +143,7 @@ Lecture materials are added as the summer school approaches, and are also distri
 12:30 - 13:30 | Lunch Break
 13:30 - 15:00 | [Advanced Frontiers: From RAG to Reasoning and Agentic LLMs](day3/Leippold/slides) | Leippold
 15:00 - 15:30 | Coffee Break
-15:30 - 17:00 | [Using Deep Sequence Modelling in Finance](day3/Trojani/slides) | Trojani
+15:30 - 17:00 | [An Introduction to Recursive Networks for conditional Asset Pricing](day3/Trojani/slides) | Trojani
 
 ### The conference, August 27 - 28, 2026
 
