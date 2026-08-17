@@ -107,43 +107,43 @@ Lecture materials are added as the summer school approaches, and are also distri
 
 ### [Day 1](day1), Monday, August 24th, 2026
 
- **Time** | **Main Topics** | **Lecturer**
-------|------|------
-08:30 - 09:00 | Registration
-09:00 - 09:10 | [Welcome by the organizers](day1/Trojani/slides) | Trojani
-09:10 - 10:30 | [Introduction to Deep Equilibrium Nets](day1/Scheidegger/slides) | Scheidegger
-10:30 - 11:00 | Coffee Break
-11:00 - 12:30 | [Hands-on: guided exercises on Deep Equilibrium Nets for solving dynamic stochastic models](day1/Scheidegger/code) | Scheidegger
-12:30 - 13:30 | Lunch Break
-13:30 - 15:00 | [Deep Surrogates to Estimate Dynamic Models](day1/Scheidegger/slides) | Scheidegger
-15:00 - 15:30 | Coffee Break
-15:30 - 17:00 | [Solving heterogeneous agent models with DeepHAM and structural reinforcement learning](day1/Yang/slides) | Yang
-19:00 - | Pizza Dinner
+| **Time** | **Main Topics** | **Lecturer** |
+| --- | --- | --- |
+| 08:30 - 09:00 | Registration | |
+| 09:00 - 09:10 | [Welcome by the organizers](day1/Trojani/slides) | Trojani |
+| 09:10 - 10:30 | [Introduction to Deep Equilibrium Nets](day1/Scheidegger/slides) | Scheidegger |
+| 10:30 - 11:00 | Coffee Break | |
+| 11:00 - 12:30 | [Hands-on: guided exercises on Deep Equilibrium Nets for solving dynamic stochastic models](day1/Scheidegger/code) | Scheidegger |
+| 12:30 - 13:30 | Lunch Break | |
+| 13:30 - 15:00 | [Deep Surrogates to Estimate Dynamic Models](day1/Scheidegger/slides) | Scheidegger |
+| 15:00 - 15:30 | Coffee Break | |
+| 15:30 - 17:00 | [Solving heterogeneous agent models with DeepHAM and structural reinforcement learning](day1/Yang/slides) | Yang |
+| 19:00 - | Pizza Dinner | |
 
 ### [Day 2](day2), Tuesday, August 25th, 2026
 
- **Time** | **Main Topics** | **Lecturer**
-------|------|------
-09:00 - 10:30 | [Physics-informed Neural Nets (PINNs) for solving Partial Differential Equations](day2/Scheidegger/slides) | Scheidegger
-10:30 - 11:00 | Coffee Break
-11:00 - 12:30 | [Deep Learning for continuous-time models](day2/Yang/slides) | Yang
-12:30 - 13:30 | Lunch Break
-13:30 - 15:00 | [Gaussian Processes for Dynamic Portfolio Optimization](day2/Trojani/slides) | Trojani
-15:00 - 15:30 | Coffee Break
-15:30 - 17:00 | [Foundations of Sequence Modelling: From RNNs to Transformers](day2/Leippold/slides) | Leippold
-19:00 - | Informal Aperitivo/Drinks (self-organized and self-funded gathering for an aperitivo or drinks).
+| **Time** | **Main Topics** | **Lecturer** |
+| --- | --- | --- |
+| 09:00 - 10:30 | [Physics-informed Neural Nets (PINNs) for solving Partial Differential Equations](day2/Scheidegger/slides) | Scheidegger |
+| 10:30 - 11:00 | Coffee Break | |
+| 11:00 - 12:30 | [Deep Learning for continuous-time models](day2/Yang/slides) | Yang |
+| 12:30 - 13:30 | Lunch Break | |
+| 13:30 - 15:00 | [Gaussian Processes for Dynamic Portfolio Optimization](day2/Trojani/slides) | Trojani |
+| 15:00 - 15:30 | Coffee Break | |
+| 15:30 - 17:00 | [Foundations of Sequence Modelling: From RNNs to Transformers](day2/Leippold/slides) | Leippold |
+| 19:00 - | Informal Aperitivo/Drinks (self-organized and self-funded gathering for an aperitivo or drinks). | |
 
 ### [Day 3](day3), Wednesday, August 26th, 2026
 
- **Time** | **Main Topics** | **Lecturer**
-------|------|------
-09:00 - 10:30 | [The LLM Revolution: Scaling Laws and Modern Architectures](day3/Leippold/slides) | Leippold
-10:30 - 11:00 | Coffee Break
-11:00 - 12:30 | [Domain Adaptation: Building Financial & Climate Intelligence](day3/Leippold/slides) | Leippold
-12:30 - 13:30 | Lunch Break
-13:30 - 15:00 | [Advanced Frontiers: From RAG to Reasoning and Agentic LLMs](day3/Leippold/slides) | Leippold
-15:00 - 15:30 | Coffee Break
-15:30 - 17:00 | [An Introduction to Recursive Networks for conditional Asset Pricing](day3/Trojani/slides) | Trojani
+| **Time** | **Main Topics** | **Lecturer** |
+| --- | --- | --- |
+| 09:00 - 10:30 | [The LLM Revolution: Scaling Laws and Modern Architectures](day3/Leippold/slides) | Leippold |
+| 10:30 - 11:00 | Coffee Break | |
+| 11:00 - 12:30 | [Domain Adaptation: Building Financial & Climate Intelligence](day3/Leippold/slides) | Leippold |
+| 12:30 - 13:30 | Lunch Break | |
+| 13:30 - 15:00 | [Advanced Frontiers: From RAG to Reasoning and Agentic LLMs](day3/Leippold/slides) | Leippold |
+| 15:00 - 15:30 | Coffee Break | |
+| 15:30 - 17:00 | [An Introduction to Recursive Networks for conditional Asset Pricing](day3/Trojani/slides) | Trojani |
 
 ### The conference, August 27 - 28, 2026
 
@@ -151,9 +151,9 @@ Directly following the summer school, the *Deep Learning for Dynamic Stochastic 
 
 Thursday, August 27th, 2026:
 
- **Time** | **Main Topics** | **Speakers**
-------|------|------
-17:15 - 18:15 | [Panel discussion: Challenges and opportunities for finance research in the era of large language models and AI agents](https://www.carloalberto.org/event/challenges-and-opportunities-for-finance-research-in-the-era-of-large-language-models-and-ai-agents/) | Leippold, Oswald, Scheidegger, Trojani
+| **Time** | **Main Topics** | **Speakers** |
+| --- | --- | --- |
+| 17:15 - 18:15 | [Panel discussion: Challenges and opportunities for finance research in the era of large language models and AI agents](https://www.carloalberto.org/event/challenges-and-opportunities-for-finance-research-in-the-era-of-large-language-models-and-ai-agents/) | Leippold, Oswald, Scheidegger, Trojani |
 
 The panel is a side initiative of the summer school, organized by the ESOMAS Department and Collegio Carlo Alberto. It takes place at Collegio Carlo Alberto, Piazza Arbarello 8, which is *not* the summer school venue. Register [in person](https://www.eventbrite.it/e/challenges-and-opportunities-for-finance-research-in-the-era-of-large-llms-tickets-1994646487338?aff=oddtdtcreator) or [online](https://us02web.zoom.us/webinar/register/WN_WOilegCBQMmKmp751CI15Q).
 
