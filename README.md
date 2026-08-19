@@ -111,11 +111,11 @@ Lecture materials are added as the summer school approaches, and are also distri
 | --- | --- | --- |
 | 08:30 - 09:00 | Registration | |
 | 09:00 - 09:10 | [Welcome by the organizers](day1/Trojani/slides) | Trojani |
-| 09:10 - 10:30 | [Introduction to Deep Learning and Deep Equilibrium Nets (part I)](day1/Scheidegger/slides) | Scheidegger |
+| 09:10 - 10:30 | [Introduction to Deep Learning and Deep Equilibrium Nets (part I)](day1/Scheidegger/slides/01_Intro_to_DeepLearning.pdf) | Scheidegger |
 | 10:30 - 11:00 | Coffee Break | |
-| 11:00 - 12:30 | [Deep Equilibrium Nets (part II)](day1/Scheidegger/code) | Scheidegger |
+| 11:00 - 12:30 | [Deep Equilibrium Nets (part II)](day1/Scheidegger/slides/02_DEQN.pdf) | Scheidegger |
 | 12:30 - 13:30 | Lunch Break | |
-| 13:30 - 15:00 | [Deep Surrogates to Estimate Dynamic Models](day1/Scheidegger/slides) | Scheidegger |
+| 13:30 - 15:00 | [Deep Surrogates to Estimate Dynamic Models](day1/Scheidegger/slides/03_Deep_Surrogates.pdf) | Scheidegger |
 | 15:00 - 15:30 | Coffee Break | |
 | 15:30 - 17:00 | [Solving heterogeneous agent models with DeepHAM and structural reinforcement learning](day1/Yang/slides) | Yang |
 | 19:00 - | Pizza Dinner | |
@@ -124,7 +124,7 @@ Lecture materials are added as the summer school approaches, and are also distri
 
 | **Time** | **Main Topics** | **Lecturer** |
 | --- | --- | --- |
-| 09:00 - 10:30 | [Physics-informed Neural Nets (PINNs) for solving Partial Differential Equations](day2/Scheidegger/slides) | Scheidegger |
+| 09:00 - 10:30 | [Physics-informed Neural Nets (PINNs) for solving Partial Differential Equations](day2/Scheidegger/slides/04_PINNs.pdf) | Scheidegger |
 | 10:30 - 11:00 | Coffee Break | |
 | 11:00 - 12:30 | [Deep Learning for continuous-time models](day2/Yang/slides) | Yang |
 | 12:30 - 13:30 | Lunch Break | |
