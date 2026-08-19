@@ -19,54 +19,27 @@ Summer School on [AI for Economics and Finance](https://sites.google.com/carloal
 | **Contact** | <deeplearningconf26@gmail.com> |
 
 
-## Contents
-
-* [About the summer school](#about-the-summer-school)
-* [Preparing for the school](#preparing-for-the-school)
-* [Schedule](#schedule)
-  * [Day 1, Monday, August 24th, 2026](#day-1-monday-august-24th-2026)
-  * [Day 2, Tuesday, August 25th, 2026](#day-2-tuesday-august-25th-2026)
-  * [Day 3, Wednesday, August 26th, 2026](#day-3-wednesday-august-26th-2026)
-  * [The conference, August 27 - 28, 2026](#the-conference-august-27---28-2026)
-* [Practical information](#practical-information)
-* [People](#people)
-
-
 ## About the summer school
 
-### Purpose
+The school equips Ph.D. students and researchers in economics and finance with the
+computational tools reshaping the field, across two complementary frontiers: solving and
+estimating dynamic stochastic models, and using LLMs and NLP for empirical work.
 
-* The summer school is designed to equip Ph.D. students and researchers in economics, finance, and related fields with the computational tools that are rapidly transforming modern economic and financial research.
-* By integrating **applied mathematics**, **machine learning**, and **computational economics**, the lectures provide a deep dive into two complementary frontiers: solving and estimating complex dynamic stochastic models, and leveraging **artificial intelligence**, **natural language processing**, and **large language models** to tackle empirical questions in economics and finance.
-* The format of the lectures is interactive and workshop-like, combining theoretical discussions with guided, hands-on coding exercises, complemented by a **panel discussion** on large language models and AI agents in finance research.
-* The coding is conducted in Python and implemented on the cloud computing infrastructure [Nuvolos](https://nuvolos.com), so that no local setup is required.
+**Days 1 and 2: deep learning for dynamic stochastic models**
 
-### Core pillars of the program
+* **Deep Equilibrium Nets and deep surrogates**: solving dynamic stochastic models, then using surrogates to *estimate* them.
+* **Heterogeneous agent models**: DeepHAM and structural reinforcement learning.
+* **PDEs and continuous time**: physics-informed neural networks, and deep learning for continuous-time frameworks.
 
-**1. Deep Learning for Solving and Estimating Dynamic Stochastic Models (days 1 and 2)**
+**Days 2 and 3: large language models and sequence modeling**
 
-The first half of the course focuses on using neural network architectures to solve high-dimensional economic problems:
+* **Foundations**: from RNNs and LSTMs to the Transformer.
+* **The LLM revolution**: pre-training, BERT and GPT, scaling laws, emergent abilities.
+* **Domain adaptation**: LoRA for financial and climate intelligence; RLHF/DPO alignment.
+* **Frontiers**: retrieval-augmented generation, agentic LLMs, applications in finance.
 
-* **Deep Equilibrium Nets and Deep Surrogates**: solving dynamic stochastic models, with guided coding exercises, followed by the use of deep surrogates for the *estimation* of such models.
-* **Heterogeneous agent models**: how machine learning, specifically DeepHAM and structural reinforcement learning, efficiently solves models that were previously computationally intractable.
-* **PDEs and continuous-time models**: physics-informed neural networks (PINNs) for solving partial differential equations, alongside dedicated deep learning techniques for continuous-time frameworks in economics and finance.
-
-**2. Large Language Models and Sequence Modeling for Economics and Finance (days 2 and 3)**
-
-The second half shifts to the processing of unstructured data, from the foundational mathematics to modern autonomous agents:
-
-* **Foundations of sequence modelling**: the mathematical backbone of time series and language, from RNNs and LSTMs to the Transformer architecture.
-* **The LLM revolution**: the pre-training paradigm, BERT and GPT architectures, scaling laws, and the emergent abilities of large models.
-* **Domain adaptation**: adapting general-purpose models for financial and climate intelligence using parameter-efficient fine-tuning (LoRA) and human-intent alignment (RLHF/DPO).
-* **Advanced frontiers and applications**: beyond basic prompting to retrieval-augmented generation (RAG), agentic LLMs (planning and tool use), and practical applications of deep sequence modelling in finance.
-
-### Expected outcomes
-
-By the end of the summer school, participants will have developed a dual skill set, whether they are exploring macroeconomic policy simulations, estimating heterogeneous agent models, or using modern LLMs to extract actionable intelligence from corporate disclosures.
-
-### Teaching philosophy
-
-The lectures will be interactive, in a workshop-like style, using [Python](http://www.python.org), [scikit learn](https://scikit-learn.org/), [PyTorch](https://pytorch.org/), and [Hugging Face Transformers](https://huggingface.co/docs/transformers) on [Nuvolos](http://nuvolos.cloud), a browser-based cloud infrastructure in which files, datasets, code, and applications work together, in order to directly implement and experiment with the introduced methods and algorithms.
+Coding is in [Python](http://www.python.org) with [scikit-learn](https://scikit-learn.org/),
+[PyTorch](https://pytorch.org/) and [Hugging Face Transformers](https://huggingface.co/docs/transformers).
 
 
 ## Preparing for the school
@@ -97,8 +70,6 @@ The lectures will be interactive, in a workshop-like style, using [Python](http:
 | [`day1/`](day1), [`day2/`](day2), [`day3/`](day3) | One folder per lecturer, each with `slides/`, `readings/`, and `code/` |
 | [`python_refresher/`](python_refresher) | Self-study notebooks on Python basics and Jupyter |
 | [`Reading_List.pdf`](Reading_List.pdf) | Per-session reading list, with the [LaTeX source](Reading_List.tex) alongside it |
-
-Lecture materials are added as the summer school approaches, and are also distributed via the Nuvolos Cloud.
 
 
 ## Schedule
@@ -147,7 +118,7 @@ Lecture materials are added as the summer school approaches, and are also distri
 
 ### The conference, August 27 - 28, 2026
 
-Directly following the summer school, the *Deep Learning for Dynamic Stochastic Models* conference brings together scholars and practitioners working on high-dimensional, nonlinear, and stochastic models. The program features invited talks, contributed presentations, and panel discussions. See the [conference program](https://sites.google.com/carloalberto.org/deeplearningsummerschool2026/conference-program) for details.
+Directly following the school, the *Deep Learning for Dynamic Stochastic Models* conference brings together scholars working on high-dimensional, nonlinear and stochastic models: invited talks, contributed presentations and panel discussions. See the [conference program](https://sites.google.com/carloalberto.org/deeplearningsummerschool2026/conference-program).
 
 Thursday, August 27th, 2026:
 
@@ -162,7 +133,7 @@ The panel is a side initiative of the summer school, organized by the ESOMAS Dep
 
 ### Venue
 
-The summer school (and conference) will take place in Classrooms 7 and 8, located on the ground floor next to the main entrance of the SME building, at Corso Unione Sovietica 218bis, 10134 Torino.
+Classrooms 7 and 8, ground floor next to the main entrance of the SME building, Corso Unione Sovietica 218bis, 10134 Torino.
 
 ### Registration, fees, and deadlines
 
@@ -170,7 +141,7 @@ Registration, the fee structure, and the application deadlines are all handled o
 
 ### Accommodation
 
-Participants are free to choose any accommodation they prefer. For convenience, a few options near the venue are listed below.
+Free choice; a few options near the venue:
 
 * **Hotel Astor**, Piazza Tancredi Galimberti 12, 10134 Torino. Offers a **special rate for guests affiliated with the University of Turin** during the summer school period. Accepted participants receive the booking instructions by email; if you have not received them, please contact <deeplearningconf26@gmail.com>.
 
@@ -203,9 +174,8 @@ Tickets and info:
 
 ### Support and contacts
 
-* For any organizational question, please write to the default email address of the summer school: <deeplearningconf26@gmail.com>
-* For any question regarding whereabouts, local assistance, etc., there is a team of students that is available to help, and should be contacted via email: <deeplearningconf26@gmail.com>
-* For questions about the computing platform: Nuvolos Support, <support@nuvolos.cloud>
+* Organization, local assistance and any other question: <deeplearningconf26@gmail.com>
+* Computing platform: Nuvolos Support, <support@nuvolos.cloud>
 
 
 ## People
