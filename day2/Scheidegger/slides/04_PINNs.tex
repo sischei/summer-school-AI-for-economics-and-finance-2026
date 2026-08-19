@@ -39,6 +39,7 @@
 \usepackage{xcolor}
 \usepackage{algorithm}
 \usepackage{algorithmic}
+\usepackage{array}
 \usepackage{listings}
 
 % ---------- Tighter display math, applied uniformly at every font size ------
@@ -1293,11 +1294,11 @@ a \emphc{$6.6\times$} improvement, at one fewer hyperparameter.}
 \begin{frame}{Soft vs.\ Hard BCs: When to Use Which?}
 \begin{center}
 {\small
-\begin{tabular}{p{2.2cm}p{4.5cm}p{4.5cm}}
+\begin{tabular}{p{2.2cm}>{\raggedright\arraybackslash}p{4.5cm}>{\raggedright\arraybackslash}p{4.5cm}}
 \toprule
 & \textbf{Soft BCs} & \textbf{Hard BCs} \\
 \midrule
-\textbf{Best for} & Complex geometries, time-dependent BCs, Robin/Neumann & Simple domains, Dirichlet BCs, high accuracy \\
+\textbf{Best for} & Irregular domains, Robin or Neumann BCs & Simple domains, Dirichlet BCs, high accuracy \\
 \midrule
 \textbf{Pros} & Flexible, easy to implement & Exact BCs, fewer hyperparams, better accuracy \\
 \midrule

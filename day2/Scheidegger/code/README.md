@@ -13,7 +13,7 @@ from any directory.
 
 ## The notebooks
 
-Slides: [`03_PINNs.pdf`](../slides/03_PINNs.pdf)
+Slides: [`04_PINNs.pdf`](../slides/04_PINNs.pdf)
 
 | # | Notebook | Topic | Slides | Role |
 |---|---|---|---|---|
