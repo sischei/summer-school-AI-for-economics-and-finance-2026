@@ -111,9 +111,9 @@ Lecture materials are added as the summer school approaches, and are also distri
 | --- | --- | --- |
 | 08:30 - 09:00 | Registration | |
 | 09:00 - 09:10 | [Welcome by the organizers](day1/Trojani/slides) | Trojani |
-| 09:10 - 10:30 | [Introduction to Deep Learning and Deep Equilibrium Nets](day1/Scheidegger/slides) | Scheidegger |
+| 09:10 - 10:30 | [Introduction to Deep Learning and Deep Equilibrium Nets (part I)](day1/Scheidegger/slides) | Scheidegger |
 | 10:30 - 11:00 | Coffee Break | |
-| 11:00 - 12:30 | [Hands-on: guided exercises on Deep Equilibrium Nets for solving dynamic stochastic models](day1/Scheidegger/code) | Scheidegger |
+| 11:00 - 12:30 | [Deep Equilibrium Nets (part II)](day1/Scheidegger/code) | Scheidegger |
 | 12:30 - 13:30 | Lunch Break | |
 | 13:30 - 15:00 | [Deep Surrogates to Estimate Dynamic Models](day1/Scheidegger/slides) | Scheidegger |
 | 15:00 - 15:30 | Coffee Break | |
