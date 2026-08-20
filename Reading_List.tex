@@ -55,6 +55,12 @@
 % --- Marker for sessions whose reading list the lecturer will complete ------
 \newcommand{\tbd}{\smallskip\noindent{\small\color{notegray}\textit{Further readings for this session will be added by the lecturer before the school.}}\par\smallskip}
 
+% --- Heading for the lecturer's further (non-required) readings ------------
+\newcommand{\further}{\smallskip\noindent{\small\color{notegray}\textit{Further reading for this session (optional).}}\par\nopagebreak\smallskip}
+
+% --- A calibration note appended inside a gray gloss ------------------------
+\newcommand{\pnote}[1]{\\[2pt]\textit{Precision note.} #1}
+
 \pagestyle{plain}
 
 \begin{document}
@@ -140,6 +146,8 @@
 \begin{itemize}
   \reading{Han, Yang \& E (2026)}{DeepHAM: A Global Solution Method for Heterogeneous Agent Models with Aggregate Shocks}{Quantitative Economics 17(2), 297--341. Code: \href{https://github.com/frankhan91/DeepHAM}{github.com/\allowbreak frankhan91/\allowbreak DeepHAM}}{https://doi.org/10.3982/QE2190}{}
   \item[] {\small\color{notegray}Neural networks approximate value and policy functions and represent the cross-sectional distribution via learned generalized moments. Focus on the moment representation and the simulation-based training objective.}
+    \reading{Yang, Wang, Schaab \& Moll (2025)}{Structural Reinforcement Learning for Heterogeneous Agent Macroeconomics}{arXiv:2512.18892}{https://benjaminmoll.com/SRL/}{} Code: \href{https://github.com/StructuralRL/SRL}{https://github.com/StructuralRL/SRL}
+  \item[] {\small\color{notegray}A structural RL method that uses low-dimensional prices as state variables and lets agents learn equilibrium price dynamics from simulated paths (Krusell--Smith, Huggett with aggregate shocks, HANK).}
 \end{itemize}
 
 % ===========================================================================
@@ -158,8 +166,18 @@
 \session{Deep learning for continuous-time models}{late morning}
 
 \begin{itemize}
-  \reading{Payne, Rebei \& Yang (2025)}{Deep Learning for Search and Matching Models}{Swiss Finance Institute Research Paper No. 25-05}{https://ideas.repec.org/p/chf/rpseri/rp2505.html}{}
+  \reading{Payne, Rebei \& Yang (2026)}{Deep Learning for Search and Matching Models}{Econometrica, Accepted}{https://ideas.repec.org/p/chf/rpseri/rp2505.html}{}
   \item[] {\small\color{notegray}The lecturer's own work: characterizes general equilibrium as a high-dimensional PDE with the distribution as a state variable, then solves it by deep learning and estimates it by simulated method of moments.}
+\end{itemize}
+
+\session{Discrete-time dynamic optimization with Gaussian processes}{afternoon}
+
+\begin{itemize}
+  \reading{Gaegauf, Scheidegger \& Trojani (2023)}{A Comprehensive Machine Learning Framework for Dynamic Portfolio Choice With Transaction Costs}{Swiss Finance Institute Research Paper No. 23-114}{https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4543794}{}
+  \item[] {\small\color{notegray} The lecturer’s own work: develops an adaptive Bellman approximation for portfolio choice with transaction costs, combining Gaussian processes and active learning to overcome the limitations of existing methods.} 
+
+
+  
 \end{itemize}
 
 \session{Foundations of Sequence Modelling: From RNNs to Transformers}{afternoon}
@@ -168,7 +186,20 @@
   \reading{Vaswani, Shazeer, Parmar, Uszkoreit, Jones, Gomez, Kaiser \& Polosukhin (2017)}{Attention Is All You Need}{Advances in Neural Information Processing Systems 30}{https://arxiv.org/abs/1706.03762}{}
   \item[] {\small\color{notegray}The Transformer. Everything on Day 3 is a variation on this architecture, so read it before the LLM sessions.}
 \end{itemize}
-\tbd
+
+% --- Further reading: Foundations of Sequence Modelling --------------------
+\further
+
+\begin{itemize}
+  \reading{Bengio, Ducharme, Vincent \& Jauvin (2003)}{A Neural Probabilistic Language Model}{Journal of Machine Learning Research 3, 1137--1155}{https://www.jmlr.org/papers/v3/bengio03a.html}{}
+  \item[] {\small\color{notegray}A clean transition from count tables to a learned conditional-probability function; distributed word representations emerge through next-word prediction.}
+  \reading{Levy \& Goldberg (2014)}{Neural Word Embedding as Implicit Matrix Factorization}{Advances in Neural Information Processing Systems 27}{https://proceedings.neurips.cc/paper_files/paper/2014/hash/b78666971ceae55a8e87efb7cbfd9ad4-Abstract.html}{}
+  \item[] {\small\color{notegray}Shows that skip-gram with negative sampling implicitly factorizes a shifted pointwise-mutual-information matrix, making the link between predictive and count-based representations mathematically explicit.\pnote{Avoid ``word2vec learned nothing counting could not produce.'' The equivalence is to a particular shifted-PMI objective; weighting, dimensionality, optimization, and evaluation behavior still matter.}}
+  \reading{Elhage, Nanda, Olsson et al. (2021)}{A Mathematical Framework for Transformer Circuits}{Transformer Circuits Thread}{https://transformer-circuits.pub/2021/framework/index.html}{}
+  \item[] {\small\color{notegray}Introduces residual-stream, QK-, OV-, and path-composition tools that make small Transformer circuits analyzable; it includes the two-layer induction-head mechanism.\pnote{This is a broader online research publication, not a conventional conference paper. For induction heads specifically, pair it with Olsson et al. (2022), \href{https://transformer-circuits.pub/2022/in-context-learning-and-induction-heads/}{In-context Learning and Induction Heads}.}}
+  \reading{Xie, Raghunathan, Liang \& Ma (2022)}{An Explanation of In-Context Learning as Implicit Bayesian Inference}{International Conference on Learning Representations (ICLR)}{https://openreview.net/forum?id=RdJVFCHjUMI}{}
+  \item[] {\small\color{notegray}A theoretical model in which the prompt supplies evidence about a latent concept and prediction resembles Bayesian posterior inference over that concept.}
+\end{itemize}
 
 % ===========================================================================
 \phantomsection\label{day3}
@@ -184,7 +215,20 @@
   \reading{Kaplan, McCandlish, Henighan et al. (2020)}{Scaling Laws for Neural Language Models}{arXiv:2001.08361}{https://arxiv.org/abs/2001.08361}{}
   \item[] {\small\color{notegray}The empirical power laws relating loss to model size, data, and compute, which is what makes the scaling half of this session go.}
 \end{itemize}
-\tbd
+
+% --- Further reading: The LLM Revolution -----------------------------------
+\further
+
+\begin{itemize}
+  \reading{Muennighoff, Rush, Barak et al. (2023)}{Scaling Data-Constrained Language Models}{Advances in Neural Information Processing Systems 36}{https://openreview.net/forum?id=j5BuTrEj35}{}
+  \item[] {\small\color{notegray}Quantifies the diminishing value of repeating data and is especially relevant when specialized finance corpora run out before compute does.}
+  \reading{Besiroglu, Erdil, Barnett \& You (2024)}{Chinchilla Scaling: A Replication Attempt}{arXiv:\allowbreak 2404.10102}{https://arxiv.org/abs/2404.10102}{}
+  \item[] {\small\color{notegray}Reconstructs and re-fits the published Chinchilla scaling-law data, providing a useful case study in treating a scaling law as an estimated statistical object.\pnote{The work is a preprint, not a peer-reviewed proceedings paper. Its current arXiv record includes revisions after the original 2024 posting.}}
+  \reading{Gao, Schulman \& Hilton (2023)}{Scaling Laws for Reward Model Overoptimization}{Proceedings of the 40th International Conference on Machine Learning, PMLR 202, 10835--10866}{https://proceedings.mlr.press/v202/gao23h.html}{}
+  \item[] {\small\color{notegray}Measures Goodhart-style overoptimization: as a policy is pushed against an imperfect proxy reward, a separate gold reward can eventually deteriorate.\pnote{The result is empirical and uses a controlled synthetic setup in which a fixed gold reward model stands in for human preferences; ``destroys the true reward'' is too categorical.}}
+  \reading{Leviathan, Kalman \& Matias (2023)}{Fast Inference from Transformers via Speculative Decoding}{Proceedings of the 40th International Conference on Machine Learning, PMLR 202, 19274--19286}{https://proceedings.mlr.press/v202/leviathan23a.html}{}
+  \item[] {\small\color{notegray}The source for exact speculative decoding: a smaller model drafts tokens and the target model verifies them in parallel without changing the target sampling distribution.}
+\end{itemize}
 
 \session{Domain Adaptation: Building Financial \& Climate Intelligence}{late morning}
 
@@ -192,7 +236,20 @@
   \reading{Webersinke, Kraus, Bingler \& Leippold (2022)}{ClimateBert: A Pretrained Language Model for Climate-Related Text}{Proceedings of the AAAI 2022 Fall Symposium, arXiv:2110.12010. Models: \href{https://huggingface.co/climatebert}{huggingface.co/climatebert}}{https://arxiv.org/abs/2110.12010}{}
   \item[] {\small\color{notegray}The instructor's own domain-adaptation case study: further pretraining on two million climate-related paragraphs, and what it buys on downstream classification tasks.}
 \end{itemize}
-\tbd
+
+% --- Further reading: Domain Adaptation ------------------------------------
+\further
+
+\begin{itemize}
+  \reading{Gururangan, Marasovi\'{c}, Swayamdipta et al. (2020)}{Don't Stop Pretraining: Adapt Language Models to Domains and Tasks}{Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics, 8342--8360}{https://aclanthology.org/2020.acl-main.740/}{}
+  \item[] {\small\color{notegray}Establishes domain-adaptive and task-adaptive pretraining as practical recipes and measures when each phase improves downstream performance.}
+  \reading{Ben-David, Blitzer, Crammer et al. (2010)}{A Theory of Learning from Different Domains}{Machine Learning 79, 151--175}{https://doi.org/10.1007/s10994-009-5152-4}{}
+  \item[] {\small\color{notegray}Provides the source-error, domain-divergence, and shared-hypothesis terms behind the classic adaptation bound.}
+  \reading{Huang, Wang \& Yang (2023)}{FinBERT: A Large Language Model for Extracting Information from Financial Text}{Contemporary Accounting Research 40(2), 806--841}{https://doi.org/10.1111/1911-3846.12832}{}
+  \item[] {\small\color{notegray}A finance-domain BERT family and an excellent naming-collision exhibit: ``FinBERT'' alone does not uniquely identify an architecture, checkpoint, or paper.}
+  \reading{Lipton, Wang \& Smola (2018)}{Detecting and Correcting for Label Shift with Black Box Predictors}{Proceedings of the 35th International Conference on Machine Learning, PMLR 80, 3122--3130}{https://proceedings.mlr.press/v80/lipton18a.html}{}
+  \item[] {\small\color{notegray}Makes label-prior shift operational through a black-box predictor and its confusion matrix, with estimation, detection, and correction procedures.}
+\end{itemize}
 
 \session{Advanced Frontiers: From RAG to Reasoning and Agentic LLMs}{afternoon}
 
@@ -207,6 +264,18 @@
 \begin{itemize}
   \reading{Gu, Kelly \& Xiu (2020)}{Empirical Asset Pricing via Machine Learning}{Review of Financial Studies 33(5), 2223--2273}{https://doi.org/10.1093/rfs/hhaa009}{}
   \item[] {\small\color{notegray}The benchmark comparison of machine-learning methods for return prediction, and the reference point for what deep sequence models must beat.}
+\end{itemize}
+\tbd
+
+\session{An Introduction to Recursive Networks for conditional Asset Pricing}{afternoon}
+
+\begin{itemize}
+
+ \reading{Theis, Kelly, Malamud \& Pedersen (2026)}{Machine Learning and the Implementable Efficient Frontier}{Review of Financial Studies}{https://doi.org/10.1093/rfs/hhag022}{}
+  \item[] {\small\color{notegray}Combines machine learning with portfolio optimization under quadratic price impact, exploiting a tractable recursive structure generally unavailable under broader transaction costs.}  
+  
+ 
+  
 \end{itemize}
 \tbd
 
@@ -232,8 +301,8 @@
 \begin{itemize}
   \reading{Scheidegger (2026)}{Deep Learning for Solving and Estimating Dynamic Models in Economics and Finance}{Textbook treatment, arXiv:2605.14493. Code: \href{https://github.com/sischei/Deep_Learning_for_Solving_And_Estimating_Dynamic_Economic_Models}{github.com/\allowbreak sischei/\allowbreak Deep\_\allowbreak Learning\_\allowbreak for\_\allowbreak Solving\_\allowbreak And\_\allowbreak Estimating\_\allowbreak Dynamic\_\allowbreak Economic\_\allowbreak Models}}{https://arxiv.org/abs/2605.14493}{}
   \item[] {\small\color{notegray}Book-length treatment of the whole first half of the school, from the basics of deep learning through Deep Equilibrium Nets to deep surrogates for estimation. The natural reference to consult alongside the lectures, and the source of the hands-on exercises.}
-  \reading{Yang, Wang, Schaab \& Moll (2025)}{Structural Reinforcement Learning for Heterogeneous Agent Macroeconomics}{arXiv:2512.18892}{https://arxiv.org/abs/2512.18892}{}
-  \item[] {\small\color{notegray}A structural RL method that uses low-dimensional prices as state variables and lets agents learn equilibrium price dynamics from simulated paths (Krusell--Smith, Huggett with aggregate shocks, HANK).}
+      \reading{Wibault et al (2026)}{Recurrent Structural Policy Gradient for Partially Observable Mean Field Games}{arXiv:2602.20141}{https://arxiv.org/pdf/2602.20141}{} Code: \href{https://github.com/CWibault/mfax}{https://github.com/CWibault/mfax}
+  \item[] {\small\color{notegray}Extending structural RL with price histories using recurrent neural networks.}
   \reading{Aiyagari (1994)}{Uninsured Idiosyncratic Risk and Aggregate Saving}{Quarterly Journal of Economics 109(3), 659--684}{https://academic.oup.com/qje/article-abstract/109/3/659/1838287}{}
   \reading{Krusell \& Smith (1998)}{Income and Wealth Heterogeneity in the Macroeconomy}{Journal of Political Economy 106(5), 867--896}{https://doi.org/10.1086/250034}{}
   \item[] {\small\color{notegray}The classic heterogeneous-agent model with aggregate risk; its curse of dimensionality is exactly what the deep-learning solvers are designed to overcome.}
@@ -257,6 +326,16 @@
   \item[] {\small\color{notegray}A survey of the PINN literature two years on, useful for placing the morning session in a wider context.}
   \reading{Hochreiter \& Schmidhuber (1997)}{Long Short-Term Memory}{Neural Computation 9(8), 1735--1780}{https://doi.org/10.1162/neco.1997.9.8.1735}{}
   \item[] {\small\color{notegray}The gated recurrent architecture that made long-range dependence learnable, and the baseline against which attention is motivated.}
+  
+   \reading{Muhle-Karbe, Reppen \& Soner, H. M. (2017)}{A primer on portfolio choice with small
+transaction costs}{Annual Review of Financial Economics, (9):301–331}{https://arxiv.org/abs/1612.01302}{}
+  \item[] {\small\color{notegray}Recent overview of the literature on dynamic portfolio optimization with transaction costs.}
+ 
+  \reading{Lynch \& Tan, S. (2011)}{Explaining the Magnitude of Liquidity Premia: The Roles of Return Predictability, Wealth Shocks, and State-Dependent Transaction Costs}{Journal of Finance, 66(4):1329–1368}{https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1540-6261.2011.01662.x}{}
+  \item[] {\small\color{notegray} An important extension of transaction-cost models beyond the canonical i.i.d. setting, showing how richer state dynamics can substantially increase liquidity premia, using standard grid-based methods whose scalability to higher-dimensional settings is limited.}    
+  
+ 
+  
 \end{itemize}
 
 % ===========================================================================
@@ -285,6 +364,16 @@
   \reading{Gentzkow, Kelly \& Taddy (2019)}{Text as Data}{Journal of Economic Literature 57(3), 535--574}{https://doi.org/10.1257/jel.20181020}{}
   \item[] {\small\color{notegray}The standard survey of how economists turn text into data, and the natural bridge from Day 3's methods to empirical work in economics and finance.}
   \reading{Chen, Pelger \& Zhu (2024)}{Deep Learning in Asset Pricing}{Management Science 70(2), 714--750}{https://doi.org/10.1287/mnsc.2023.4695}{}
+  
+
+  \reading{Kelly, Kutznetzov, Malamud \& Xu (2025)}{Artificial Intelligence Asset Pricing Models}{NBER Working Paper No. w33351}{https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5089371}{}
+  \item[] {\small\color{notegray}Introduces transformers into stochastic discount factor modeling to study conditional asset pricing through nonlinearities and cross-asset information sharing.}
+
+  
+   \reading{Goyenko, Kelly, Moskowitz, Su \& Zhang (2026)}{Trading Volume Alpha}{NBER Working Paper No. w33037}{https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4802345}{}
+  \item[] {\small\color{notegray}Uses machine learning to predict trading volume and studies portfolio choice with price impact, assessing the value of volume forecasts relative to standard return predictability.}   
+  
+  
 \end{itemize}
 
 \vfill
