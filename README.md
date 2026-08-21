@@ -81,40 +81,40 @@ Coding is in [Python](http://www.python.org) with [scikit-learn](https://scikit-
 | **Time** | **Main Topics** | **Lecturer** |
 | --- | --- | --- |
 | 08:30 - 09:00 | Registration | |
-| 09:00 - 09:10 | [Welcome by the organizers](day1/Trojani/slides) | Trojani |
-| 09:10 - 10:30 | [Introduction to Deep Learning and Deep Equilibrium Nets (part I)](day1/Scheidegger/slides/01_Intro_to_DeepLearning.pdf) | Scheidegger |
+| 09:00 - 09:10 | [Welcome by the Organizers](day1/Trojani/slides) | Trojani |
+| 09:10 - 10:30 | [Introduction to Deep Learning and Deep Equilibrium Nets (Part I)](day1/Scheidegger/slides/01_Intro_to_DeepLearning.pdf) | Scheidegger |
 | 10:30 - 11:00 | Coffee Break | |
-| 11:00 - 12:30 | [Deep Equilibrium Nets (part II)](day1/Scheidegger/slides/02_DEQN.pdf) | Scheidegger |
+| 11:00 - 12:30 | [Deep Equilibrium Nets (Part II)](day1/Scheidegger/slides/02_DEQN.pdf) | Scheidegger |
 | 12:30 - 13:30 | Lunch Break | |
 | 13:30 - 15:00 | [Deep Surrogates to Estimate Dynamic Models](day1/Scheidegger/slides/03_Deep_Surrogates.pdf) | Scheidegger |
 | 15:00 - 15:30 | Coffee Break | |
-| 15:30 - 17:00 | [Solving heterogeneous agent models with DeepHAM and structural reinforcement learning](day1/Yang/slides) | Yang |
+| 15:30 - 17:00 | [Solving Heterogeneous Agent Models with DeepHAM and Structural Reinforcement Learning](day1/Yang/slides) | Yang |
 | 19:00 - | Pizza Dinner | |
 
 ### [Day 2](day2), Tuesday, August 25th, 2026
 
 | **Time** | **Main Topics** | **Lecturer** |
 | --- | --- | --- |
-| 09:00 - 10:30 | [Physics-informed Neural Nets (PINNs) for solving Partial Differential Equations](day2/Scheidegger/slides/04_PINNs.pdf) | Scheidegger |
+| 09:00 - 10:30 | [Physics-Informed Neural Nets (PINNs) for Solving Partial Differential Equations](day2/Scheidegger/slides/04_PINNs.pdf) | Scheidegger |
 | 10:30 - 11:00 | Coffee Break | |
-| 11:00 - 12:30 | [Deep Learning for continuous-time models](day2/Yang/slides) | Yang |
+| 11:00 - 12:30 | [Deep Learning for Continuous-Time Models](day2/Yang/slides) | Yang |
 | 12:30 - 13:30 | Lunch Break | |
 | 13:30 - 15:00 | [Gaussian Processes for Dynamic Portfolio Optimization](day2/Trojani/slides) | Trojani |
 | 15:00 - 15:30 | Coffee Break | |
-| 15:30 - 17:00 | [Foundations of Sequence Modelling: From RNNs to Transformers](day2/Leippold/slides) | Leippold |
+| 15:30 - 17:00 | [Practical Session on DeepHAM and Continuous-Time Models](day2/Yang/slides) | Yang |
 | 19:00 - | Informal Aperitivo/Drinks (self-organized and self-funded gathering for an aperitivo or drinks). | |
 
 ### [Day 3](day3), Wednesday, August 26th, 2026
 
 | **Time** | **Main Topics** | **Lecturer** |
 | --- | --- | --- |
-| 09:00 - 10:30 | [The LLM Revolution: Scaling Laws and Modern Architectures](day3/Leippold/slides) | Leippold |
+| 09:00 - 10:30 | [Foundations of Sequence Modelling: From RNNs to Transformers](day3/Leippold/slides) | Leippold |
 | 10:30 - 11:00 | Coffee Break | |
-| 11:00 - 12:30 | [Domain Adaptation: Building Financial & Climate Intelligence](day3/Leippold/slides) | Leippold |
+| 11:00 - 12:30 | [The LLM Revolution: Scaling Laws and Modern Architectures](day3/Leippold/slides) | Leippold |
 | 12:30 - 13:30 | Lunch Break | |
-| 13:30 - 15:00 | [Advanced Frontiers: From RAG to Reasoning and Agentic LLMs](day3/Leippold/slides) | Leippold |
+| 13:30 - 15:00 | [Domain Adaptation: Building Financial & Climate Intelligence and Advanced Frontiers: From RAG to Reasoning and Agentic LLMs](day3/Leippold/slides) | Leippold |
 | 15:00 - 15:30 | Coffee Break | |
-| 15:30 - 17:00 | [An Introduction to Recursive Networks for conditional Asset Pricing](day3/Trojani/slides) | Trojani |
+| 15:30 - 17:00 | [An Introduction to Recursive Networks for Conditional Asset Pricing](day3/Trojani/slides) | Trojani |
 
 ### The conference, August 27 - 28, 2026
 
