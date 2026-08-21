@@ -31,7 +31,7 @@ estimating dynamic stochastic models, and using LLMs and NLP for empirical work.
 * **Heterogeneous agent models**: DeepHAM and structural reinforcement learning.
 * **PDEs and continuous time**: physics-informed neural networks, and deep learning for continuous-time frameworks.
 
-**Days 2 and 3: large language models and sequence modeling**
+**Day 3: large language models and sequence modeling**
 
 * **Foundations**: from RNNs and LSTMs to the Transformer.
 * **The LLM revolution**: pre-training, BERT and GPT, scaling laws, emergent abilities.
@@ -101,18 +101,18 @@ Coding is in [Python](http://www.python.org) with [scikit-learn](https://scikit-
 | 12:30 - 13:30 | Lunch Break | |
 | 13:30 - 15:00 | [Gaussian Processes for Dynamic Portfolio Optimization](day2/Trojani/slides) | Trojani |
 | 15:00 - 15:30 | Coffee Break | |
-| 15:30 - 17:00 | [Foundations of Sequence Modelling: From RNNs to Transformers](day2/Leippold/slides) | Leippold |
+| 15:30 - 17:00 | [Tutorials](day2/Yang) | Yang |
 | 19:00 - | Informal Aperitivo/Drinks (self-organized and self-funded gathering for an aperitivo or drinks). | |
 
 ### [Day 3](day3), Wednesday, August 26th, 2026
 
 | **Time** | **Main Topics** | **Lecturer** |
 | --- | --- | --- |
-| 09:00 - 10:30 | [The LLM Revolution: Scaling Laws and Modern Architectures](day3/Leippold/slides) | Leippold |
+| 09:00 - 10:30 | [Foundations of Sequence Modelling: From RNNs to Transformers](day3/Leippold/slides) | Leippold |
 | 10:30 - 11:00 | Coffee Break | |
-| 11:00 - 12:30 | [Domain Adaptation: Building Financial & Climate Intelligence](day3/Leippold/slides) | Leippold |
+| 11:00 - 12:30 | [The LLM Revolution: Scaling Laws and Modern Architectures](day3/Leippold/slides) | Leippold |
 | 12:30 - 13:30 | Lunch Break | |
-| 13:30 - 15:00 | [Advanced Frontiers: From RAG to Reasoning and Agentic LLMs](day3/Leippold/slides) | Leippold |
+| 13:30 - 15:00 | [Domain Adaptation: Building Financial & Climate Intelligence](day3/Leippold/slides) and [Advanced Frontiers: From RAG to Reasoning and Agentic LLMs](day3/Leippold/slides) (combined session) | Leippold |
 | 15:00 - 15:30 | Coffee Break | |
 | 15:30 - 17:00 | [An Introduction to Recursive Networks for conditional Asset Pricing](day3/Trojani/slides) | Trojani |
 
