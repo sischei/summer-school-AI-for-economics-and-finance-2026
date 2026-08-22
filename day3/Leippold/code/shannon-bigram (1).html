@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shannon bigram text generator</title>
+<style>
+  :root{
+    --paper:#f3eee4; --panel:#fbf8f1; --ink:#1b1915; --muted:#6c6457;
+    --line:#d9d0c0; --grid:rgba(27,25,21,.045); --accent:#22577D; --accent-soft:#efe2dc;
+    --radius:10px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --paper:#15130f; --panel:#1f1c16; --ink:#ece6da; --muted:#988f81;
+      --line:#34302a; --grid:rgba(236,230,218,.05); --accent:#5B93C9; --accent-soft:#2a211b;
+    }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background-color:var(--paper);
+    background-image:
+      linear-gradient(var(--grid) 1px,transparent 1px),
+      linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+    background-size:26px 26px;
+    color:var(--ink);
+    font-family:"Hanken Grotesk",system-ui,sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:clamp(28px,6vw,64px) 22px 80px}
+  header{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:26px}
+  h1{
+    font-family:"Newsreader",Georgia,serif;font-weight:500;
+    font-size:clamp(2rem,5.5vw,3.1rem);line-height:1.05;letter-spacing:-.01em;margin:0;
+  }
+  h1 em{font-style:italic;color:var(--accent)}
+  .sub{color:var(--muted);margin:.5rem 0 0;font-size:1rem;max-width:56ch}
+  .sub code{font-family:"IBM Plex Mono",monospace;font-size:.85em;color:var(--ink)}
+  label{display:block;font-weight:500;font-size:.82rem;letter-spacing:.02em;
+    text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+  label span{font-family:"IBM Plex Mono",monospace;text-transform:none;color:var(--accent);font-weight:500}
+  textarea{
+    width:100%;min-height:150px;resize:vertical;padding:14px 16px;
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    color:var(--ink);font-family:"IBM Plex Mono",monospace;font-size:.9rem;line-height:1.65;
+  }
+  textarea:focus,select:focus,input:focus{outline:2px solid var(--accent);outline-offset:1px}
+  .controls{display:flex;flex-wrap:wrap;gap:16px 20px;align-items:flex-end;margin:20px 0 0}
+  .field{display:flex;flex-direction:column}
+  .field.grow{flex:1 1 230px}
+  select,input[type=number]{
+    background:var(--panel);border:1px solid var(--line);border-radius:8px;color:var(--ink);
+    font-family:inherit;font-size:.95rem;padding:9px 11px;max-width:100%;
+  }
+  input[type=number]{width:90px}
+  input[type=range]{accent-color:var(--accent);width:100%;margin:8px 0 2px}
+  button{
+    font-family:inherit;font-size:.95rem;font-weight:500;cursor:pointer;
+    border:1px solid var(--accent);border-radius:8px;padding:10px 22px;
+    background:var(--accent);color:#fff;transition:opacity .15s,transform .05s;
+  }
+  button:hover{opacity:.88}
+  button:active{transform:translateY(1px)}
+  .stats{font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--muted);
+    margin:20px 0 0;letter-spacing:.01em}
+  .stats b{color:var(--accent);font-weight:500}
+  .out-label{margin-top:32px}
+  #output{
+    background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:var(--radius);padding:20px 22px;min-height:120px;
+    font-family:"IBM Plex Mono",monospace;font-size:.96rem;line-height:1.85;
+  }
+  #output .ph{color:var(--muted)}
+  #output span{display:inline-block;white-space:pre}
+  .note{color:var(--muted);font-size:.86rem;margin-top:22px;border-top:1px solid var(--line);padding-top:18px}
+  .note code{font-family:"IBM Plex Mono",monospace;color:var(--ink);font-size:.85em}
+  .callout{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:var(--radius);padding:12px 15px;margin:14px 0}
+  .honesty{border-left-color:#2f6f55;color:var(--muted)}
+  @keyframes rise{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+  @keyframes fadeup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  header,.io,.controls{animation:fadeup .5s ease both}
+  .controls{animation-delay:.06s}
+  #output span{animation:rise .32s ease both}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>The <em>bigram</em> machine</h1>
+    <p class="sub">Shannon's 1948 idea, at its simplest: a word-level Markov chain. It counts which word follows which, then random-walks those counts. Base estimator is plain maximum likelihood, <code>P(next | current) = count(current, next) / count(current)</code> — now with temperature and add-α smoothing layered on top.</p>
+  </header>
+  <div class="callout honesty"><b>Epistemic status:</b> exact count estimator and exact sampling rule on a toy corpus. Generated prose is one controlled draw, not evidence about modern LLM quality.</div>
+  <div class="callout"><b>Predict first.</b> Hold the seed fixed. If you raise context order, temperature, or smoothing, which change should increase repetition, which should increase novelty, and which can remove dead ends?</div>
+
+  <div class="io">
+    <label for="corpus">Training text</label>
+    <textarea id="corpus" spellcheck="false"></textarea>
+  </div>
+
+  <div class="controls">
+    <div class="field">
+      <label for="corpus-pick">Corpus</label>
+      <select id="corpus-pick">
+        <option value="sustain" selected>Sustainability report</option>
+        <option value="pastoral">Pastoral tale</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="order">Model</label>
+      <select id="order">
+        <option value="1" selected>Bigram — 1 word</option>
+        <option value="2">Trigram — 2 words</option>
+        <option value="3">4-gram — 3 words</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="len">Length</label>
+      <input type="number" id="len" min="10" max="400" value="70">
+    </div>
+    <div class="field">
+      <label for="seed">Seed</label>
+      <input type="number" id="seed" min="1" max="999999" value="2026">
+    </div>
+    <button id="go">Generate</button>
+  </div>
+
+  <div class="controls">
+    <div class="field grow">
+      <label for="temp">Temperature <span id="temp-val">1.00</span></label>
+      <input type="range" id="temp" min="0.1" max="2" step="0.05" value="1">
+    </div>
+    <div class="field grow">
+      <label for="alpha">Smoothing α <span id="alpha-val">0.00</span></label>
+      <input type="range" id="alpha" min="0" max="1" step="0.01" value="0">
+    </div>
+  </div>
+
+  <p class="stats" id="stats"></p>
+
+  <label class="out-label" for="output">Generated text</label>
+  <div id="output"><span class="ph">Press generate.</span></div>
+
+  <p class="note">Two knobs shape the walk. <code>Temperature T</code> resamples ∝ count<sup>1/T</sup>: toward 0 the walk becomes greedy and repetitive, while larger values flatten the successor distribution. <code>Smoothing α</code> adds a pseudo-count to every token in this corpus vocabulary, so any in-vocabulary token can follow any context and the chain no longer dead-ends.</p>
+</div>
+
+<script>
+const CORPORA = {
+  sustain: `At our company we are committed to building a more sustainable and resilient future for all of our stakeholders. This year we made meaningful progress toward our ambitious net zero commitments across our entire value chain. We continue to embed sustainability into every decision and every process throughout the organization. Our stakeholders expect transparency, and we are proud to report measurable progress against our most material priorities. We reduced our absolute emissions year over year while continuing to grow our business responsibly. We engaged our stakeholders, our employees, our customers, and our suppliers in an open and ongoing dialogue. We remain committed to responsible sourcing, to circular design, and to the long term health of the communities in which we operate. Looking ahead, we will continue to invest in clean energy, in nature based solutions, and in the wellbeing of our people. We believe that doing well and doing good are deeply connected. Together with our stakeholders we will continue to drive positive and lasting change for our business, for our communities, and for the planet we all share. This is only the beginning of our journey toward a more sustainable and inclusive future for everyone.`,
+  pastoral: `The river runs quietly past the old stone bridge. The old miller watches the river and the bridge and the slow gray clouds. Every morning the miller grinds the golden wheat into soft white flour. The baker buys the flour and bakes warm bread for the village. The children of the village love the warm bread and the sweet red apples from the orchard. In the orchard the bees hum softly among the white blossoms. The river runs on past the orchard and the mill and the sleeping village, carrying the gray clouds and the soft light of the early morning toward the distant sea.`
+};
+
+const isTerm = t => t === '.' || t === '!' || t === '?';
+const isWord = t => !isTerm(t);
+let random = Math.random;
+function mulberry32(seed){let s=seed>>>0;return function(){s|=0;s=(s+0x6D2B79F5)|0;let t=Math.imul(s^(s>>>15),1|s);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296}}
+
+// lowercase; keep words (with internal apostrophes) and sentence terminators as tokens
+function tokenize(text){
+  return (text.toLowerCase().match(/[a-z0-9']+|[.!?]/g)) || [];
+}
+
+// context = the previous `order` tokens (order 1 = bigram). Returns the transition
+// table, a frequency-weighted list of sentence-start contexts, and the full vocabulary.
+function buildModel(tokens, order){
+  const model = new Map();   // ctxKey -> Map(nextToken -> count)
+  const starts = [];
+  const vocabSet = new Set(tokens);
+  for(let i = 0; i + order < tokens.length; i++){
+    const ctx = tokens.slice(i, i + order).join(' ');
+    const next = tokens[i + order];
+    if(!model.has(ctx)) model.set(ctx, new Map());
+    const succ = model.get(ctx);
+    succ.set(next, (succ.get(next) || 0) + 1);
+    if(i === 0 || isTerm(tokens[i - 1])) starts.push(ctx);   // sentence beginnings
+  }
+  if(!starts.length) starts.push(...model.keys());           // fallback
+  return {model, starts, vocab: [...vocabSet]};
+}
+
+// Sample a successor. Weight(w) = (count(c,w) + alpha)^(1/T):
+//   alpha  > 0 : every vocabulary word is a candidate (smoothed, never dead-ends)
+//   alpha == 0 : only observed successors; returns null at a dead end
+// Counts are divided by their max before exponentiating purely for numerical stability
+// (a constant per-context factor that leaves the sampling distribution unchanged).
+function sampleNext(succ, vocab, alpha, invT){
+  if(alpha > 0){
+    const base = (succ && succ.size ? Math.max(...succ.values()) : 0) + alpha;
+    let total = 0; const w = new Array(vocab.length);
+    for(let i = 0; i < vocab.length; i++){
+      const c = (succ ? (succ.get(vocab[i]) || 0) : 0) + alpha;
+      const v = Math.pow(c / base, invT); w[i] = v; total += v;
+    }
+    let r = random() * total;
+    for(let i = 0; i < vocab.length; i++){ r -= w[i]; if(r < 0) return vocab[i]; }
+    return vocab[vocab.length - 1];
+  }
+  if(!succ || !succ.size) return null;                       // dead end
+  const ent = [...succ.entries()];
+  const base = Math.max(...succ.values());
+  let total = 0; const w = ent.map(([, c]) => { const v = Math.pow(c / base, invT); total += v; return v; });
+  let r = random() * total;
+  for(let i = 0; i < ent.length; i++){ r -= w[i]; if(r < 0) return ent[i][0]; }
+  return ent[ent.length - 1][0];
+}
+
+function walk(model, starts, vocab, order, target, alpha, invT){
+  if(!model.size) return [];
+  let out = starts[(random() * starts.length) | 0].split(' ').slice();
+  let words = out.filter(isWord).length;
+  const cap = target + 30;
+  while(true){
+    const ctx = out.slice(out.length - order).join(' ');
+    const next = sampleNext(model.get(ctx), vocab, alpha, invT);
+    if(next === null){                                       // dead end (alpha == 0 only)
+      if(words >= target) break;
+      if(out.length && !isTerm(out[out.length - 1])) out.push('.');
+      const st = starts[(random() * starts.length) | 0].split(' ');
+      out.push(...st); words += st.filter(isWord).length;
+      continue;
+    }
+    if(isTerm(next) && out.length && isTerm(out[out.length - 1])) continue;  // avoid ".."
+    out.push(next);
+    if(isWord(next)) words++;
+    if(words >= target && isTerm(next)) break;               // stop cleanly at a sentence end
+    if(words >= cap) break;                                  // safety valve
+  }
+  if(out.length && !isTerm(out[out.length - 1])) out.push('.');
+  return out;
+}
+
+function detokenize(tokens){
+  let out = '', cap = true;
+  for(const t of tokens){
+    if(isTerm(t)){ out += t; cap = true; continue; }
+    let w = t;
+    if(cap){ w = w.charAt(0).toUpperCase() + w.slice(1); cap = false; }
+    else if(w === 'i' || /^i'/.test(w)){ w = 'I' + w.slice(1); }
+    out += (out ? ' ' : '') + w;
+  }
+  return out.trim();
+}
+
+const $ = id => document.getElementById(id);
+
+function generate(){
+  random = mulberry32(+$('seed').value || 2026);
+  const tokens = tokenize($('corpus').value);
+  const order = +$('order').value;
+  const target = Math.max(1, +$('len').value || 1);
+  const invT = 1 / Math.max(0.05, +$('temp').value);
+  const alpha = +$('alpha').value;
+  const out = $('output');
+
+  if(tokens.length <= order){
+    out.innerHTML = '<span class="ph">Add a little more text — not enough to build the model.</span>';
+    $('stats').innerHTML = '';
+    return;
+  }
+
+  const {model, starts, vocab} = buildModel(tokens, order);
+
+  const wordVocab = new Set(tokens.filter(isWord)).size;
+  let deg = 0; for(const s of model.values()) deg += s.size;
+  const meanDeg = (deg / model.size).toFixed(2);
+  $('stats').innerHTML =
+    `tokens <b>${tokens.length}</b> &nbsp;·&nbsp; vocabulary <b>${wordVocab}</b> ` +
+    `&nbsp;·&nbsp; states <b>${model.size}</b> &nbsp;·&nbsp; mean out-degree <b>${meanDeg}</b>`;
+
+  const text = detokenize(walk(model, starts, vocab, order, target, alpha, invT));
+  out.innerHTML = '';
+  text.split(' ').forEach((word, i) => {
+    const span = document.createElement('span');
+    span.textContent = (i ? ' ' : '') + word;
+    span.style.animationDelay = Math.min(i * 14, 700) + 'ms';
+    out.appendChild(span);
+  });
+}
+
+$('temp').addEventListener('input', () => { $('temp-val').textContent = (+$('temp').value).toFixed(2); });
+$('alpha').addEventListener('input', () => { $('alpha-val').textContent = (+$('alpha').value).toFixed(2); });
+['temp', 'alpha', 'order', 'len', 'seed'].forEach(id => $(id).addEventListener('change', generate));
+$('go').addEventListener('click', generate);
+$('corpus-pick').addEventListener('change', () => { $('corpus').value = CORPORA[$('corpus-pick').value]; generate(); });
+
+$('corpus').value = CORPORA[$('corpus-pick').value];
+$('temp-val').textContent = '1.00';
+$('alpha-val').textContent = '0.00';
+generate();
+</script>
+</body>
+</html>

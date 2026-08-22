@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The neural language model — Bengio 2003</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f3eee4; --panel:#fbf8f1; --ink:#1b1915; --muted:#6c6457;
+    --line:#d9d0c0; --grid:rgba(27,25,21,.045); --accent:#22577D; --radius:10px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --paper:#15130f; --panel:#1f1c16; --ink:#ece6da; --muted:#988f81;
+      --line:#34302a; --grid:rgba(236,230,218,.05); --accent:#5B93C9;
+    }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background-color:var(--paper);
+    background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+    background-size:26px 26px;
+    color:var(--ink); font-family:"Hanken Grotesk",system-ui,sans-serif; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:clamp(28px,6vw,64px) 22px 80px}
+  header{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:26px}
+  h1{font-family:"Newsreader",Georgia,serif;font-weight:500;font-size:clamp(2rem,5.5vw,3.1rem);line-height:1.05;letter-spacing:-.01em;margin:0}
+  h1 em{font-style:italic;color:var(--accent)}
+  .sub{color:var(--muted);margin:.5rem 0 0;font-size:1rem;max-width:66ch}
+  .sub code{font-family:"IBM Plex Mono",monospace;font-size:.85em;color:var(--ink)}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-top:18px;animation:fadeup .5s ease both}
+  .controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:15px 20px}
+  .ctl{display:flex;flex-direction:column;gap:5px}
+  .ctl label{font-weight:500;font-size:.72rem;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;align-items:baseline}
+  .ctl label b{color:var(--accent);font-family:"IBM Plex Mono",monospace;font-weight:500;font-size:.82rem}
+  input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
+  select,input[type=number]{background:var(--paper);border:1px solid var(--line);border-radius:7px;color:var(--ink);font-family:inherit;font-size:.88rem;padding:6px 8px}
+  input:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px}
+  .ctl.dim{opacity:.4;pointer-events:none}
+  .chk{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--muted);font-weight:500}
+  .chk input{width:16px;height:16px;accent-color:var(--accent)}
+  .row{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:16px}
+  button{font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;border:1px solid var(--accent);border-radius:8px;padding:8px 18px;background:var(--accent);color:#fff;transition:opacity .15s,transform .05s}
+  button.ghost{background:transparent;color:var(--accent)}
+  button:hover{opacity:.88}
+  button:active{transform:translateY(1px)}
+  textarea{width:100%;min-height:108px;resize:vertical;background:var(--paper);border:1px solid var(--line);border-radius:8px;color:var(--ink);font-family:"IBM Plex Mono",monospace;font-size:.8rem;line-height:1.5;padding:11px}
+  .two{display:grid;grid-template-columns:1fr;gap:18px}
+  @media(min-width:720px){.two{grid-template-columns:1.05fr .95fr}}
+  .chart-title{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:0 0 8px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+  .chart-title b{color:var(--accent);font-weight:500}
+  .chart-note{color:var(--muted);font-size:.82rem;margin:8px 0 0}
+  svg{display:block;width:100%;height:auto}
+  .legend{display:flex;flex-wrap:wrap;gap:7px 14px;font-size:.72rem;color:var(--muted);margin-top:10px}
+  .legend span{display:inline-flex;align-items:center;gap:5px}
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+  .ctxrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px;font-family:"IBM Plex Mono",monospace;font-size:.82rem;color:var(--muted)}
+  .gen{font-family:"IBM Plex Mono",monospace;font-size:.92rem;color:var(--ink);line-height:1.9;min-height:1.9em}
+  .gen .w{padding:1px 3px;border-radius:3px}
+  .stats{display:flex;flex-wrap:wrap;gap:10px 22px;font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--muted);margin-top:6px}
+  .stats b{color:var(--accent);font-weight:500}
+  .note{color:var(--muted);font-size:.86rem;margin-top:26px;border-top:1px solid var(--line);padding-top:18px}
+  .note code{font-family:"IBM Plex Mono",monospace;color:var(--ink);font-size:.85em}
+  footer{margin-top:18px;font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--muted)}
+  footer a{color:var(--accent);text-decoration:none}
+  footer a:hover{text-decoration:underline}
+  @keyframes fadeup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>The <em>neural</em> language model</h1>
+    <p class="sub">Bengio's 2003 fix for the bigram's defects. Instead of a count table, each word becomes a learned vector \(C(w)\in\mathbb R^m\); the previous few vectors are concatenated, pushed through a \(\tanh\) hidden layer, and a softmax predicts the next word — the <em>same</em> head and cross-entropy loss as the bigram page. Train it live below and watch the embedding plane organize itself: words used in similar contexts drift together, which is exactly why it generalizes to sentences it never saw.</p>
+  </header>
+
+  <div class="panel">
+    <div class="controls">
+      <div class="ctl"><label for="m">Embedding dim m <b id="m_v"></b></label><input type="range" id="m" min="2" max="16" step="1" value="2"></div>
+      <div class="ctl"><label for="k">Context (n&minus;1) <b id="k_v"></b></label><input type="range" id="k" min="1" max="3" step="1" value="2"></div>
+      <div class="ctl"><label for="hid">Hidden units <b id="hid_v"></b></label><input type="range" id="hid" min="0" max="32" step="1" value="16"></div>
+      <div class="ctl"><label for="lr">Learning rate <b id="lr_v"></b></label><input type="range" id="lr" min="0.05" max="2" step="0.05" value="0.5"></div>
+      <div class="ctl"><label for="wd">Weight decay <b id="wd_v"></b></label><input type="range" id="wd" min="0" max="0.005" step="0.0005" value="0"></div>
+      <div class="ctl"><label for="temp">Sampling temp <b id="temp_v"></b></label><input type="range" id="temp" min="0.3" max="1.5" step="0.05" value="0.7"></div>
+    </div>
+    <div class="row">
+      <label class="chk" id="dir_wrap"><input type="checkbox" id="dir"> direct connections</label>
+      <div class="ctl" style="flex-direction:row;align-items:center;gap:8px"><label style="margin:0;text-transform:none;letter-spacing:0">seed</label><input type="number" id="seed" value="7" style="width:80px"></div>
+      <button id="train">Train ▶</button>
+      <button class="ghost" id="reset">Reset</button>
+      <button class="ghost" id="newcorpus">Regenerate corpus</button>
+    </div>
+  </div>
+
+  <div class="panel two">
+    <div>
+      <p class="chart-title"><span>The embedding plane</span><span id="embmode"></span></p>
+      <div id="embed"></div>
+      <div class="legend" id="legend"></div>
+      <p class="chart-note">Colours are <em>our</em> labels for reading the map — the model never sees them. It only ever sees which words precede which, yet nouns, verbs and places sort themselves into regions.</p>
+    </div>
+    <div>
+      <p class="chart-title"><span>Training loss</span><span id="lossreadout"></span></p>
+      <div id="loss"></div>
+      <p class="chart-note">Cross-entropy in nats; perplexity \(=e^{\text{loss}}\), the same metric as the bigram page. Minibatch SGD on the penalized log-likelihood.</p>
+    </div>
+  </div>
+
+  <div class="panel">
+    <p class="chart-title">Next-word distribution &nbsp;·&nbsp; pick a context, read the model's prediction</p>
+    <div class="ctxrow" id="ctxrow"></div>
+    <div id="bars"></div>
+    <p class="chart-note" id="genonote">Try <code>the&nbsp;cat</code> then <code>a&nbsp;dog</code>: once trained, the bars are nearly identical — the model learned the two nouns are interchangeable, so what it knows about one transfers to the other. That transfer is the whole point.</p>
+  </div>
+
+  <div class="panel">
+    <p class="chart-title"><span>Generated sentences</span><button class="ghost" id="gen" style="padding:5px 14px;font-size:.8rem">Generate ↻</button></p>
+    <div class="gen" id="genbox">— train the model, then generate —</div>
+  </div>
+
+  <div class="panel">
+    <textarea id="corpus" spellcheck="false"></textarea>
+    <div class="stats" id="stats"></div>
+  </div>
+
+  <p class="note">This is still an order-\((n{-}1)\) <em>Markov</em> model — it sees a fixed window and nothing before it. What the neural form buys is not memory but <em>generalization</em>: parameters grow linearly in vocabulary and context (a count table grows as \(V^{\,n}\)), and the shared, smooth embedding gives structured backoff by similarity instead of the flat floor of add-\(\alpha\) smoothing. Set hidden units to \(0\) to recover the linear log-bilinear model; shrink the vocabulary and it collapses toward the bigram. The fixed window is the defect the recurrent network removes next.</p>
+
+  <footer>↳ <a href="bengio-foundations.html">the mathematics of the neural LM</a> &nbsp;·&nbsp; <a href="bigram-foundations.html">the bigram foundations</a> · <a href="shannon-bigram.html">the bigram machine</a> · <a href="hmm-machine.html">the hidden-state machine</a></footer>
+</div>
+
+<script>window.MathJax={tex:{inlineMath:[['\\(','\\)']]},options:{skipHtmlTags:['script','style','textarea']}};</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<script>
+const $ = id => document.getElementById(id);
+function mulberry32(seed){ let s=seed>>>0; return function(){ s|=0; s=(s+0x6D2B79F5)|0; let t=Math.imul(s^(s>>>15),1|s); t=(t+Math.imul(t^(t>>>7),61|t))^t; return ((t^(t>>>14))>>>0)/4294967296; }; }
+
+// ---------- toy corpus from slot templates ----------
+const DET=['the','a'], NOUN=['cat','dog','bird','woman','man'], VERB=['runs','walks','sleeps','sings','sits'],
+      PREP=['in','near','behind'], PLACE=['garden','park','house','forest','field'];
+const CLASS = { det:DET, noun:NOUN, verb:VERB, prep:PREP, place:PLACE, punct:['.'], boundary:['<s>'] };
+const LABEL = {}; for(const [c,ws] of Object.entries(CLASS)) for(const w of ws) LABEL[w]=c;
+function classColors(){
+  const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  return dark
+   ? { noun:'#5B93C9', verb:'#5fb6c8', place:'#79c98e', det:'#d6b35a', prep:'#b79be0', punct:'#9a9286', boundary:'#6c6457', other:'#807868' }
+   : { noun:'#22577D', verb:'#2f7d8a', place:'#3f7d4f', det:'#9a7415', prep:'#6a4f93', punct:'#8a8276', boundary:'#b9b1a3', other:'#9a9286' };
+}
+function generateCorpus(seed){
+  const rng = mulberry32(seed); const pick=a=>a[Math.floor(rng()*a.length)]; const out=[];
+  for(let i=0;i<70;i++){
+    if(rng()<0.62) out.push([pick(DET),pick(NOUN),pick(VERB),pick(PREP),'the',pick(PLACE),'.'].join(' '));
+    else out.push([pick(DET),pick(NOUN),pick(VERB),'.'].join(' '));
+  }
+  // wrap lines for readability
+  const lines=[]; for(let i=0;i<out.length;i+=4) lines.push(out.slice(i,i+4).join('  '));
+  return lines.join('\n');
+}
+
+// ---------- tokenize + build vocab + examples ----------
+function tokenize(text){ return text.split(/\s+/).filter(Boolean); }
+function buildData(text, k){
+  const toks = tokenize(text);
+  const vocab = ['<s>', ...Array.from(new Set(toks))];
+  const idx = Object.fromEntries(vocab.map((w,i)=>[w,i]));
+  // split into sentences on '.'
+  const sents=[]; let cur=[]; for(const t of toks){ cur.push(t); if(t==='.'){ sents.push(cur); cur=[]; } } if(cur.length) sents.push(cur);
+  const X=[], Y=[];
+  for(const s of sents){ const p=[...Array(k).fill('<s>'),...s]; for(let i=k;i<p.length;i++){ X.push(p.slice(i-k,i).map(w=>idx[w])); Y.push(idx[p[i]]); } }
+  return { vocab, idx, V:vocab.length, X, Y };
+}
+
+// ---------- model ----------
+function makeModel(V, m, hdim, k, direct, seed){
+  const rng = mulberry32(seed); const U=(a,b)=>a+(b-a)*rng(); const D=k*m;
+  const useDirect = direct || hdim===0;
+  return {
+    V, m, hdim, k, D, useDirect,
+    C:  Array.from({length:V},()=>Array.from({length:m},()=>U(-0.1,0.1))),
+    Hw: hdim?Array.from({length:hdim},()=>Array.from({length:D},()=>U(-1,1)/Math.sqrt(D))):[],
+    Hb: new Array(hdim).fill(0),
+    Uo: hdim?Array.from({length:V},()=>Array.from({length:hdim},()=>U(-1,1)/Math.sqrt(hdim))):[],
+    W:  useDirect?Array.from({length:V},()=>Array.from({length:D},()=>U(-1,1)/Math.sqrt(D))):null,
+    bo: new Array(V).fill(0)
+  };
+}
+function forward(M, ctx){
+  const {V,m,hdim,k,D,useDirect}=M;
+  const x=new Array(D); for(let j=0;j<k;j++){ const e=M.C[ctx[j]]; for(let d=0;d<m;d++) x[j*m+d]=e[d]; }
+  let h=[]; if(hdim){ h=new Array(hdim); for(let a=0;a<hdim;a++){ let s=M.Hb[a]; const r=M.Hw[a]; for(let d=0;d<D;d++) s+=r[d]*x[d]; h[a]=Math.tanh(s); } }
+  const y=new Array(V);
+  for(let i=0;i<V;i++){ let s=M.bo[i];
+    if(hdim){ const r=M.Uo[i]; for(let a=0;a<hdim;a++) s+=r[a]*h[a]; }
+    if(useDirect){ const r=M.W[i]; for(let d=0;d<D;d++) s+=r[d]*x[d]; }
+    y[i]=s; }
+  let mx=-1e9; for(const v of y) if(v>mx) mx=v;
+  let Z=0; const p=new Array(V); for(let i=0;i<V;i++){ p[i]=Math.exp(y[i]-mx); Z+=p[i]; } for(let i=0;i<V;i++) p[i]/=Z;
+  return { x, h, p };
+}
+function trainEpoch(M, X, Y, lr, wd){
+  const {V,m,hdim,k,D,useDirect}=M; const Nex=X.length, bs=32;
+  const ord=[...Array(Nex).keys()]; for(let i=Nex-1;i>0;i--){ const j=Math.floor(RNG()*(i+1)); [ord[i],ord[j]]=[ord[j],ord[i]]; }
+  let nll=0;
+  for(let st=0; st<Nex; st+=bs){
+    const end=Math.min(Nex,st+bs), nb=end-st;
+    const gC=M.C.map(r=>r.map(()=>0)), gHw=M.Hw.map(r=>r.map(()=>0)), gHb=M.Hb.map(()=>0),
+          gUo=M.Uo.map(r=>r.map(()=>0)), gbo=M.bo.map(()=>0), gW=useDirect?M.W.map(r=>r.map(()=>0)):null;
+    for(let ii=st; ii<end; ii++){
+      const e=ord[ii], ctx=X[e], t=Y[e]; const {x,h,p}=forward(M,ctx);
+      nll += -Math.log(Math.max(p[t],1e-12));
+      const dy=p.slice(); dy[t]-=1;
+      const dx=new Array(D).fill(0);
+      for(let i=0;i<V;i++) gbo[i]+=dy[i];
+      if(useDirect) for(let i=0;i<V;i++){ const g=dy[i]; const r=M.W[i], gr=gW[i]; for(let d=0;d<D;d++){ dx[d]+=g*r[d]; gr[d]+=g*x[d]; } }
+      if(hdim){
+        const dh=new Array(hdim).fill(0); for(let a=0;a<hdim;a++){ let s=0; for(let i=0;i<V;i++) s+=dy[i]*M.Uo[i][a]; dh[a]=s; }
+        for(let i=0;i<V;i++){ const g=dy[i]; const r=gUo[i]; for(let a=0;a<hdim;a++) r[a]+=g*h[a]; }
+        const dpre=new Array(hdim); for(let a=0;a<hdim;a++) dpre[a]=dh[a]*(1-h[a]*h[a]);
+        for(let a=0;a<hdim;a++){ const g=dpre[a]; const r=M.Hw[a], gr=gHw[a]; for(let d=0;d<D;d++){ dx[d]+=g*r[d]; gr[d]+=g*x[d]; } gHb[a]+=g; }
+      }
+      for(let j=0;j<k;j++){ const w=ctx[j]; for(let d=0;d<m;d++) gC[w][j*m+d]+=dx[j*m+d]; }
+    }
+    const s=lr/nb;
+    for(let i=0;i<V;i++){ M.bo[i]-=s*gbo[i];
+      if(hdim) for(let a=0;a<hdim;a++) M.Uo[i][a]-=s*(gUo[i][a]+wd*M.Uo[i][a]);
+      if(useDirect) for(let d=0;d<D;d++) M.W[i][d]-=s*(gW[i][d]+wd*M.W[i][d]); }
+    if(hdim) for(let a=0;a<hdim;a++){ for(let d=0;d<D;d++) M.Hw[a][d]-=s*(gHw[a][d]+wd*M.Hw[a][d]); M.Hb[a]-=s*gHb[a]; }
+    for(let w=0;w<V;w++) for(let d=0;d<m;d++) M.C[w][d]-=s*(gC[w][d]+wd*M.C[w][d]);
+  }
+  return nll/Nex;
+}
+
+// ---------- 2D projection (PCA via Jacobi w/ eigenvectors when m>2) ----------
+function project2D(C, m){
+  if(m===2) return C.map(r=>[r[0],r[1]]);
+  const V=C.length; const mean=new Array(m).fill(0);
+  for(const r of C) for(let d=0;d<m;d++) mean[d]+=r[d]; for(let d=0;d<m;d++) mean[d]/=V;
+  const cov=Array.from({length:m},()=>new Array(m).fill(0));
+  for(const r of C) for(let i=0;i<m;i++){ const di=r[i]-mean[i]; for(let j=0;j<m;j++) cov[i][j]+=di*(r[j]-mean[j]); }
+  for(let i=0;i<m;i++) for(let j=0;j<m;j++) cov[i][j]/=V;
+  // Jacobi with vectors
+  const A=cov.map(r=>r.slice()); const Vec=Array.from({length:m},(_,i)=>Array.from({length:m},(_,j)=>i===j?1:0));
+  for(let sweep=0;sweep<60;sweep++){ let off=0; for(let p=0;p<m;p++)for(let q=p+1;q<m;q++) off+=A[p][q]*A[p][q]; if(off<1e-12) break;
+    for(let p=0;p<m;p++)for(let q=p+1;q<m;q++){ if(Math.abs(A[p][q])<1e-14) continue;
+      const th=(A[q][q]-A[p][p])/(2*A[p][q]); const t=Math.sign(th||1)/(Math.abs(th)+Math.sqrt(th*th+1)); const c=1/Math.sqrt(t*t+1), s=t*c;
+      for(let kk=0;kk<m;kk++){ const akp=A[kk][p],akq=A[kk][q]; A[kk][p]=c*akp-s*akq; A[kk][q]=s*akp+c*akq; }
+      for(let kk=0;kk<m;kk++){ const apk=A[p][kk],aqk=A[q][kk]; A[p][kk]=c*apk-s*aqk; A[q][kk]=s*apk+c*aqk; }
+      for(let kk=0;kk<m;kk++){ const vkp=Vec[kk][p],vkq=Vec[kk][q]; Vec[kk][p]=c*vkp-s*vkq; Vec[kk][q]=s*vkp+c*vkq; }
+    } }
+  const ev=Array.from({length:m},(_,i)=>[A[i][i],i]).sort((a,b)=>b[0]-a[0]);
+  const a1=ev[0][1], a2=ev[1][1];
+  return C.map(r=>{ let p1=0,p2=0; for(let d=0;d<m;d++){ const x=r[d]-mean[d]; p1+=x*Vec[d][a1]; p2+=x*Vec[d][a2]; } return [p1,p2]; });
+}
+
+// ---------- charts ----------
+function palette(){
+  const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  return dark ? { ink:'#ece6da', accent:'#5B93C9', grid:'rgba(236,230,218,.10)', axis:'rgba(236,230,218,.40)', muted:'rgba(236,230,218,.5)', bar:'#5B93C9', barbg:'rgba(236,230,218,.10)' }
+              : { ink:'#1b1915', accent:'#22577D', grid:'rgba(27,25,21,.09)', axis:'rgba(27,25,21,.40)', muted:'rgba(27,25,21,.5)', bar:'#22577D', barbg:'rgba(27,25,21,.07)' };
+}
+function chartEmbed(pts, vocab, cc){
+  const W=440, H=360, pad=26;
+  let xs=pts.map(p=>p[0]), ys=pts.map(p=>p[1]);
+  let lo0=Math.min(...xs), hi0=Math.max(...xs), lo1=Math.min(...ys), hi1=Math.max(...ys);
+  const r0=(hi0-lo0)||1, r1=(hi1-lo1)||1; lo0-=r0*0.08; hi0+=r0*0.08; lo1-=r1*0.08; hi1+=r1*0.08;
+  const x=v=>pad+(v-lo0)/(hi0-lo0)*(W-2*pad), y=v=>H-pad-(v-lo1)/(hi1-lo1)*(H-2*pad);
+  let dots='';
+  for(let i=0;i<vocab.length;i++){ const w=vocab[i]; const lab=LABEL[w]||'other'; const col=cc[lab]||cc.other;
+    const px=x(pts[i][0]).toFixed(1), py=y(pts[i][1]).toFixed(1);
+    dots += `<circle cx="${px}" cy="${py}" r="3.4" fill="${col}"/>`
+         +  `<text x="${px}" y="${(+py-6).toFixed(1)}" text-anchor="middle" font-size="10.5" fill="${col}" font-family="IBM Plex Mono">${w==='<s>'?'⟨s⟩':w}</text>`;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" style="max-width:480px;margin:0 auto"><rect x="1" y="1" width="${W-2}" height="${H-2}" rx="8" fill="none" stroke="${palette().grid}"/>${dots}</svg>`;
+}
+function chartLoss(curve, C){
+  const W=440, H=360, mT=14, mB=26, mL=40, mR=12, n=curve.length;
+  if(n===0) return `<svg viewBox="0 0 ${W} ${H}"><text x="${W/2}" y="${H/2}" text-anchor="middle" font-size="12" fill="${C.muted}" font-family="IBM Plex Mono">press Train ▶</text></svg>`;
+  const hi=Math.max(...curve)*1.05, lo=0;
+  const x=i=>mL+(n>1?i/(n-1):0)*(W-mL-mR), y=v=>mT+(hi-v)/(hi-lo)*(H-mT-mB);
+  let d=''; for(let i=0;i<n;i++) d+=(i?'L':'M')+x(i).toFixed(1)+' '+y(curve[i]).toFixed(2);
+  // perplexity-ish gridlines at a few loss values
+  let grid=''; const ticks=[hi*0.25,hi*0.5,hi*0.75].map(v=>+v.toFixed(2));
+  for(const tk of ticks){ grid+=`<line x1="${mL}" x2="${W-mR}" y1="${y(tk).toFixed(1)}" y2="${y(tk).toFixed(1)}" stroke="${C.grid}"/>`
+    +`<text x="${mL-5}" y="${(y(tk)+3).toFixed(1)}" text-anchor="end" font-size="9" fill="${C.axis}" font-family="IBM Plex Mono">${tk.toFixed(1)}</text>`; }
+  const ax=`<line x1="${mL}" x2="${mL}" y1="${mT}" y2="${H-mB}" stroke="${C.axis}"/><line x1="${mL}" x2="${W-mR}" y1="${y(0)}" y2="${y(0)}" stroke="${C.axis}"/>`
+    +`<text x="${mL-5}" y="${(y(0)+3).toFixed(1)}" text-anchor="end" font-size="9" fill="${C.axis}" font-family="IBM Plex Mono">0</text>`
+    +`<text x="${(W+mL)/2}" y="${H-5}" text-anchor="middle" font-size="9" fill="${C.axis}" font-family="IBM Plex Mono">epoch</text>`
+    +`<text x="${mL-30}" y="${(mT+(H-mB-mT)/2).toFixed(1)}" text-anchor="middle" font-size="9" fill="${C.axis}" font-family="IBM Plex Mono" transform="rotate(-90 ${mL-30} ${(mT+(H-mB-mT)/2).toFixed(1)})">loss (nats)</text>`;
+  return `<svg viewBox="0 0 ${W} ${H}">${grid}${ax}<path d="${d}" fill="none" stroke="${C.accent}" stroke-width="1.8"/></svg>`;
+}
+function chartBars(probs, vocab, cc, C){
+  const items=probs.map((p,i)=>[p,i]).sort((a,b)=>b[0]-a[0]).slice(0,8);
+  const W=760, rowH=26, H=items.length*rowH+8, mL=92, mR=44;
+  const max=Math.max(...items.map(it=>it[0]),0.01);
+  let rows='';
+  items.forEach((it,r)=>{ const [p,i]=it; const w=vocab[i]; const lab=LABEL[w]||'other'; const col=cc[lab]||cc.other;
+    const yy=r*rowH+4, bw=(p/max)*(W-mL-mR);
+    rows += `<text x="${mL-8}" y="${yy+15}" text-anchor="end" font-size="12" fill="${C.ink}" font-family="IBM Plex Mono">${w==='<s>'?'⟨s⟩':w}</text>`
+         +  `<rect x="${mL}" y="${yy+4}" width="${(W-mL-mR)}" height="14" rx="3" fill="${C.barbg}"/>`
+         +  `<rect x="${mL}" y="${yy+4}" width="${bw.toFixed(1)}" height="14" rx="3" fill="${col}"/>`
+         +  `<text x="${(mL+bw+6).toFixed(1)}" y="${yy+15}" font-size="10.5" fill="${C.muted}" font-family="IBM Plex Mono">${(p*100).toFixed(1)}%</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}">${rows}</svg>`;
+}
+
+// ---------- state ----------
+let RNG = mulberry32(7);
+let M=null, DATA=null, CURVE=[], EPOCH=0, RUNNING=false, RAF=null, CTX=null;
+const MAXEP=400;
+
+function structuralParams(){ return { m:+$('m').value, k:+$('k').value, hid:+$('hid').value, direct:$('dir').checked, seed:(+$('seed').value)|0 }; }
+
+function rebuild(){
+  stop();
+  const sp=structuralParams();
+  RNG = mulberry32(sp.seed ^ 0x9e3779b9);
+  DATA = buildData($('corpus').value, sp.k);
+  M = makeModel(DATA.V, sp.m, sp.hid, sp.k, sp.direct, sp.seed);
+  CURVE=[]; EPOCH=0;
+  // default context for prediction
+  CTX = [];
+  const want = ['the','cat','dog']; // sensible default if present
+  for(let j=0;j<sp.k;j++){ const w = (DATA.idx[ want[j] ]!==undefined? want[j] : DATA.vocab[Math.min(j+1,DATA.vocab.length-1)] ); CTX.push(w); }
+  buildCtxRow();
+  drawAll();
+  updateStats();
+}
+function buildCtxRow(){
+  const row=$('ctxrow'); row.innerHTML='';
+  const k=M.k;
+  for(let j=0;j<k;j++){ const sel=document.createElement('select'); sel.dataset.pos=j;
+    for(const w of DATA.vocab){ const o=document.createElement('option'); o.value=w; o.textContent=(w==='<s>'?'⟨s⟩':w); if(w===CTX[j]) o.selected=true; sel.appendChild(o); }
+    sel.addEventListener('change',()=>{ CTX[+sel.dataset.pos]=sel.value; drawBars(); });
+    row.appendChild(sel);
+    if(j<k-1){ const span=document.createElement('span'); span.textContent='→'; }
+  }
+  const arrow=document.createElement('span'); arrow.textContent='⟶  ?'; row.appendChild(arrow);
+}
+
+function drawEmbed(){
+  const pts = project2D(M.C, M.m);
+  $('embed').innerHTML = chartEmbed(pts, DATA.vocab, classColors());
+  $('embmode').textContent = M.m===2 ? 'raw 2-D' : 'PCA of '+M.m+'-D';
+  // legend
+  const cc=classColors(); const present=new Set(DATA.vocab.map(w=>LABEL[w]||'other'));
+  const order=['noun','verb','place','det','prep','punct','boundary','other'];
+  $('legend').innerHTML = order.filter(c=>present.has(c)).map(c=>`<span><span class="dot" style="background:${cc[c]}"></span>${c}</span>`).join('');
+}
+function drawLoss(){
+  $('loss').innerHTML = chartLoss(CURVE, palette());
+  $('lossreadout').innerHTML = EPOCH>0 ? `epoch <b>${EPOCH}</b> · PP <b>${Math.exp(CURVE[CURVE.length-1]).toFixed(2)}</b>` : '';
+}
+function drawBars(){
+  if(!CTX) return;
+  const ctxIdx = CTX.map(w=>DATA.idx[w] ?? 0);
+  const {p} = forward(M, ctxIdx);
+  $('bars').innerHTML = chartBars(p, DATA.vocab, classColors(), palette());
+}
+function drawAll(){ drawEmbed(); drawLoss(); drawBars(); }
+
+function updateStats(){
+  const {V,m,hdim,k,D,useDirect}=M;
+  const params = V*m + (hdim?hdim*D+hdim:0) + (hdim?V*hdim+V:V) + (useDirect?V*D:0);
+  const ngram = Math.pow(V,k+1);
+  $('stats').innerHTML =
+      `vocab V <b>${V}</b>`
+    + `<span>examples <b>${DATA.X.length}</b></span>`
+    + `<span>params <b>${params.toLocaleString()}</b> = Vm + hidden + output${useDirect?' + W':''}</span>`
+    + `<span>count table would need V<sup>${k+1}</sup> = <b>${ngram.toLocaleString()}</b></span>`;
+}
+
+// ---------- generation ----------
+function sample(temp){
+  const k=M.k; let ctx=new Array(k).fill(DATA.idx['<s>']); const out=[];
+  for(let n=0;n<14;n++){
+    const {p}=forward(M,ctx);
+    const logits=p.map(v=>Math.log(Math.max(v,1e-12))/temp);
+    let mx=Math.max(...logits), Z=0; const q=logits.map(v=>{ const e=Math.exp(v-mx); Z+=e; return e; }).map(e=>e/Z);
+    let r=RNG(), acc=0, pick=q.length-1; for(let i=0;i<q.length;i++){ acc+=q[i]; if(r<=acc){ pick=i; break; } }
+    const w=DATA.vocab[pick]; out.push(w); ctx=[...ctx.slice(1),pick]; if(w==='.') break;
+  }
+  return out;
+}
+function doGenerate(){
+  const cc=classColors(); const lines=[];
+  for(let i=0;i<5;i++){ const ws=sample(+$('temp').value);
+    lines.push(ws.map(w=>`<span class="w" style="color:${cc[LABEL[w]||'other']}">${w==='<s>'?'⟨s⟩':w}</span>`).join(' ')); }
+  $('genbox').innerHTML = lines.join('<br>');
+}
+
+// ---------- training loop ----------
+function step(){
+  if(!RUNNING) return;
+  const loss = trainEpoch(M, DATA.X, DATA.Y, +$('lr').value, +$('wd').value);
+  EPOCH++; CURVE.push(loss);
+  drawEmbed(); drawLoss(); drawBars();
+  if(EPOCH>=MAXEP){ stop(); return; }
+  RAF=requestAnimationFrame(step);
+}
+function start(){ if(RUNNING) return; if(EPOCH>=MAXEP){ return; } RUNNING=true; $('train').textContent='Pause ⏸'; RAF=requestAnimationFrame(step); }
+function stop(){ RUNNING=false; if(RAF) cancelAnimationFrame(RAF); $('train').textContent = EPOCH>=MAXEP ? 'Done ✓' : 'Train ▶'; }
+
+// ---------- wiring ----------
+function syncLabels(){
+  $('m_v').textContent=$('m').value; $('k_v').textContent=$('k').value; $('hid_v').textContent=$('hid').value==='0'?'0 (linear)':$('hid').value;
+  $('lr_v').textContent=(+$('lr').value).toFixed(2); $('wd_v').textContent=(+$('wd').value).toFixed(4); $('temp_v').textContent=(+$('temp').value).toFixed(2);
+  $('dir_wrap').classList.toggle('dim', $('hid').value==='0');
+}
+['m','k','hid','dir','seed'].forEach(id=>$(id).addEventListener('input',()=>{ syncLabels(); rebuild(); }));
+['lr','wd'].forEach(id=>$(id).addEventListener('input',syncLabels));
+$('temp').addEventListener('input',syncLabels);
+$('train').addEventListener('click',()=>{ if(RUNNING) stop(); else { if($('train').textContent.startsWith('Done')){return;} start(); } });
+$('reset').addEventListener('click',()=>{ rebuild(); });
+$('newcorpus').addEventListener('click',()=>{ const s=(Math.random()*1e6)|0; $('corpus').value=generateCorpus(s); rebuild(); });
+$('gen').addEventListener('click',doGenerate);
+let cTimer=null; $('corpus').addEventListener('input',()=>{ clearTimeout(cTimer); cTimer=setTimeout(rebuild,500); });
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{ drawAll(); });
+
+// init
+$('corpus').value = generateCorpus(20250203);
+syncLabels();
+rebuild();
+</script>
+</body>
+</html>
