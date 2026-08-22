@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The decision certificate — when may the system act alone?</title>
+<style>
+:root{--accent:#22577d;--paper:#f3eee4;--panel:#fbf8f1;--ink:#1b1915;--muted:#6c6457;--line:#d9d0c0;--blue:#22577d;--cyan:#5e92b5;--red:#9c4a32;--green:#2f6f55}
+@media(prefers-color-scheme:dark){:root{--accent:#5b93c9;--paper:#15130f;--panel:#1f1c16;--ink:#ece6da;--muted:#aaa094;--line:#39342c;--blue:#67a4d8;--cyan:#91bddc;--red:#d18668;--green:#79b795}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 system-ui,sans-serif}
+.wrap{max-width:980px;margin:auto;padding:40px 22px 70px}
+h1{font:500 clamp(2rem,6vw,3.4rem)/1.02 Georgia,serif;margin:0}h1 em{color:var(--blue)}
+.sub,.note{color:var(--muted)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;margin-top:18px}
+.honesty{border-left:4px solid var(--green)}
+.prompt{border-left:4px solid var(--blue);padding:10px 14px;margin:0}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:0 22px}
+.ctl{margin:12px 0 4px}
+.ctl label{display:flex;justify-content:space-between;color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.03em}
+.ctl b,.mono{font-family:ui-monospace,monospace;color:var(--blue)}
+input[type=range]{width:100%;accent-color:var(--blue)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:16px}
+.stat{border-top:3px solid var(--cyan);padding:8px}
+.stat span{display:block;color:var(--muted);font-size:.68rem;text-transform:uppercase}
+.stat b{font:600 .98rem ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.stat i{font-style:normal;font-size:.7rem;color:var(--muted);font-family:ui-monospace,monospace}
+.status{padding:13px 16px;border-radius:9px;margin-top:14px;font-weight:700;font-size:1.06rem}
+.yes{background:#2f6f5522;color:var(--green);border:1px solid var(--green)}
+.no{background:#9c4a3222;color:var(--red);border:1px solid var(--red)}
+table{border-collapse:collapse;width:100%;margin-top:10px;font-size:.9rem}
+th,td{border-bottom:1px solid var(--line);padding:8px 9px;text-align:right;font-variant-numeric:tabular-nums}
+th:first-child,td:first-child{text-align:left}
+thead th{color:var(--muted);font-weight:600;font-size:.74rem;text-transform:uppercase;letter-spacing:.03em}
+tr.best td,tr.best th{background:#22577d14;font-weight:700}
+svg{width:100%;height:auto;display:block}
+h3{font:500 1rem Georgia,serif;margin:0 0 4px}
+.legend{display:flex;flex-wrap:wrap;gap:5px 18px;font-size:.76rem;color:var(--muted);margin-top:6px}
+.legend i{display:inline-block;width:15px;height:3px;vertical-align:3px;margin-right:5px}
+.take{color:var(--green);font-weight:700}.flag{color:var(--red);font-weight:700}
+@media(max-width:760px){.grid3{grid-template-columns:1fr}}
+</style></head><body><main class="wrap">
+
+<h1>The certificate: <em>a margin, not a number</em></h1>
+<p class="sub">A credit committee must hold, review, or reduce a facility. The model supplies one estimate. The question is not what it recommends — it is whether that recommendation may be executed without a human.</p>
+
+<section class="panel honesty"><b>Epistemic status:</b> exact arithmetic on a declared 3&times;2 loss matrix. The certificate is the sufficient condition <span class="mono">R(a,p̂) &minus; R(a&#8321;,p̂) &gt; &epsilon;&thinsp;(rg(a&#8321;)+rg(a))</span> proved in the session; the flip counter below re-checks it by brute force on 4000 draws inside the ball each redraw. Nothing here validates <span class="mono">p̂</span> or <span class="mono">&epsilon;</span> — supplying those honestly is the hard part, and it is your job, not the widget's.</section>
+
+<section class="panel"><p class="prompt"><b>Predict first.</b> <span class="mono">review</span> costs 0.6 whichever way the world goes — its loss range is <em>zero</em>, the safest row in the matrix. <span class="mono">reduce</span> carries a range of 1.0 and <span class="mono">hold</span> a range of 6.0. Now raise &epsilon; until certificates start disappearing. Rank the three by which survives longest, and commit before you drag. (Each one does close eventually — the question is the order, and at what &epsilon;.)</p></section>
+
+<section class="panel">
+ <div class="grid3">
+  <div class="ctl"><label>estimate <span class="mono">p&#770;(default)</span> <b id="pOut"></b></label>
+    <input id="pv" type="range" min="0" max="1" step="0.005" value="0.25"></div>
+  <div class="ctl"><label>error radius &epsilon; (total variation) <b id="eOut"></b></label>
+    <input id="ev" type="range" min="0" max="0.7" step="0.005" value="0.03"></div>
+  <div class="ctl"><label>loss if you hold through a default <b id="hOut"></b></label>
+    <input id="hv" type="range" min="1" max="12" step="0.5" value="6"></div>
+ </div>
+
+ <div id="status" class="status"></div>
+
+ <div class="stats">
+  <div class="stat"><span>preferred action</span><b id="act"></b><i>argmin expected loss</i></div>
+  <div class="stat"><span>margin to runner-up</span><b id="marg"></b><i>&Gamma;&#770;</i></div>
+  <div class="stat"><span>margin required</span><b id="req"></b><i>&epsilon;(rg a&#8321; + rg a)</i></div>
+  <div class="stat"><span>flips in 4000 probes</span><b id="flip"></b><i>brute force in the ball</i></div>
+  <div class="stat"><span>loose bound would need</span><b id="loose"></b><i>2&thinsp;&epsilon;&thinsp;max rg</i></div>
+ </div>
+
+ <table><thead><tr><th>action</th><th>if no default</th><th>if default</th><th>range rg(a)</th><th>expected loss</th><th>required margin</th></tr></thead><tbody id="rows"></tbody></table>
+</section>
+
+<section class="panel">
+ <h3>Where the right to act exists, over the whole range of estimates</h3>
+ <svg id="chart" viewBox="0 0 900 330" role="img" aria-label="Expected loss of each action against the estimated default probability, with the uncertified bands shaded"></svg>
+ <div class="legend"><span><i style="background:var(--blue)"></i>hold</span><span><i style="background:var(--cyan)"></i>review</span><span><i style="background:var(--green)"></i>reduce</span><span><i style="background:var(--red);opacity:.35"></i>no certificate at this &epsilon;</span></div>
+ <p class="note" style="font-size:.84rem;margin-top:10px">The shaded bands are computed exactly from the certificate condition, not sampled. The vertical marker is your current estimate.</p>
+</section>
+
+<section class="panel"><p class="prompt"><span class="take">Debrief — part one: the recommendation is not the thing that changes.</span>
+Hold <span class="mono">p&#770;</span> fixed at 0.25 and raise &epsilon;. The preferred action stays <span class="mono">review</span> at every setting — the estimate never moves, so neither does the <em>argmin</em>. What disappears is the <b>right to execute it without a human</b>. Those are two different objects, and a system that reports only the first has not told you whether it may act.</p></section>
+
+<section class="panel"><p class="prompt"><span class="flag">Debrief — part two: own exposure does not order survival. Geometry does.</span>
+At the default loss matrix the certified regions are, exactly:
+<span class="mono">hold</span> on <span class="mono">[0, 0.1&minus;&epsilon;)</span>, closing at <b>&epsilon; = 0.10</b>;
+<span class="mono">review</span> on <span class="mono">(0.1+&epsilon;, 0.4&minus;&epsilon;)</span>, closing at <b>&epsilon; = 0.15</b>;
+<span class="mono">reduce</span> on <span class="mono">(0.4+&epsilon;, 1]</span>, closing at <b>&epsilon; = 0.60</b> — where even a certain default, <span class="mono">p&#770; = 1</span>, stops clearing the margin against <span class="mono">review</span>.
+<br><br>So the zero-exposure action does not survive longest, and the highest-exposure action does not die first for the reason you would guess. What decides survival is how much room an action's optimality region has. <span class="mono">review</span> is squeezed between two crossings 0.3 apart and loses &epsilon; from each end, so it closes first at 0.15; <span class="mono">reduce</span> has 0.6 of room to the right-hand edge of the simplex, so it closes last. A hedging action — the one a committee reaches for precisely when it is unsure — is the one that can only be automated when you are <em>already</em> sure.
+<br><br>Note also what the middle column of the table shows: <span class="mono">review</span>'s required margin is set entirely by the loss range of the alternative it is declining. Your right to act is destroyed by the exposure you are choosing <em>not</em> to take.</p></section>
+
+<p class="note" style="margin-top:22px">Static page. No network requests, no external fonts or libraries — it runs offline from a USB drive.</p>
+
+</main><script>
+'use strict';
+const $=x=>document.getElementById(x);
+
+/* the lender's loss matrix; columns are [no default, default] */
+function actions(hold){
+  return [
+    {n:'hold',   L:[0.0, hold], c:'--blue'},
+    {n:'review', L:[0.6, 0.6 ], c:'--cyan'},
+    {n:'reduce', L:[1.0, 0.0 ], c:'--green'}
+  ];
+}
+const risk=(a,p)=>(1-p)*a.L[0]+p*a.L[1];
+const rg  = a =>Math.max(...a.L)-Math.min(...a.L);
+
+/* the certificate, exactly as proved: sufficient for a1 to stay optimal
+   over every distribution within total variation eps of p-hat. */
+function certify(A,p,eps){
+  const scored=A.map(a=>({a,r:risk(a,p)})).sort((x,y)=>x.r-y.r);
+  const a1=scored[0].a;
+  let ok=true, worstSlack=Infinity, need=0, marg=Infinity;
+  for(const s of scored.slice(1)){
+    const gap=s.r-scored[0].r, req=eps*(rg(a1)+rg(s.a));
+    if(gap<marg){marg=gap;}
+    if(gap-req<worstSlack){worstSlack=gap-req; need=req;}
+    if(!(gap>req)) ok=false;
+  }
+  return {ok,a1,marg,need,scored};
+}
+
+/* seeded PRNG so the flip count is identical in every rehearsal */
+let seed=20260826;
+function rnd(){seed=(1664525*seed+1013904223)>>>0;return seed/4294967296}
+
+function probe(A,p,eps,N){
+  const base=A.map(a=>({a,r:risk(a,p)})).sort((x,y)=>x.r-y.r)[0].a.n;
+  let flips=0;
+  for(let i=0;i<N;i++){
+    const q=Math.min(1,Math.max(0,p+(2*rnd()-1)*eps));   // TV ball, 2 outcomes
+    const w=A.map(a=>({a,r:risk(a,q)})).sort((x,y)=>x.r-y.r)[0].a.n;
+    if(w!==base) flips++;
+  }
+  return flips;
+}
+
+function update(){
+  seed=20260826;
+  const p=+$('pv').value, eps=+$('ev').value, hold=+$('hv').value;
+  $('pOut').textContent=p.toFixed(3);
+  $('eOut').textContent=eps.toFixed(3);
+  $('hOut').textContent=hold.toFixed(1);
+
+  const A=actions(hold);
+  const {ok,a1,marg,need,scored}=certify(A,p,eps);
+  const flips=probe(A,p,eps,4000);
+
+  $('act').textContent=a1.n;
+  $('marg').textContent=marg.toFixed(3);
+  $('req').textContent=need.toFixed(3);
+  $('flip').textContent=flips;
+  $('loose').textContent=(2*eps*Math.max(...A.map(rg))).toFixed(3);
+
+  const st=$('status');
+  st.className='status '+(ok?'yes':'no');
+  st.textContent=ok
+    ? 'CERTIFIED — "'+a1.n+'" is optimal for every distribution in the ball. The system may act alone.'
+    : 'NO CERTIFICATE — "'+a1.n+'" is preferred, but the ball contains distributions that prefer something else. Escalate.';
+
+  const body=$('rows'); body.replaceChildren();
+  scored.forEach((s,i)=>{
+    const tr=document.createElement('tr');
+    if(i===0) tr.className='best';
+    const req = i===0 ? '—' : (eps*(rg(a1)+rg(s.a))).toFixed(3);
+    const cells=[s.a.n,s.a.L[0].toFixed(1),s.a.L[1].toFixed(1),rg(s.a).toFixed(1),s.r.toFixed(3),req];
+    cells.forEach((v,j)=>{
+      const c=document.createElement(j?'td':'th'); c.textContent=v; tr.appendChild(c);
+    });
+    body.appendChild(tr);
+  });
+
+  draw(A,p,eps,hold);
+}
+
+function draw(A,p,eps,hold){
+  const W=900,H=330,m={l:58,r:16,t:16,b:44};
+  const PMAX=1.0, LMAX=Math.max(1.2, hold*0.45);
+  const X=v=>m.l+(v/PMAX)*(W-m.l-m.r);
+  const Y=v=>H-m.b-(v/LMAX)*(H-m.t-m.b);
+  let out='';
+
+  /* exact uncertified region: scan a fine grid and mark where the test fails */
+  const STEP=0.0005;
+  let run=null;
+  for(let v=0;v<=PMAX+1e-12;v+=STEP){
+    const bad=!certify(A,v,eps).ok;
+    if(bad && run===null) run=v;
+    if((!bad||v>PMAX-STEP) && run!==null){
+      out+='<rect x="'+X(run)+'" y="'+m.t+'" width="'+Math.max(1,X(v)-X(run))+
+           '" height="'+(H-m.t-m.b)+'" fill="var(--red)" opacity="0.16"/>';
+      run=null;
+    }
+  }
+
+  /* grid + axes */
+  for(let i=0;i<=4;i++){
+    const v=LMAX*i/4;
+    out+='<line x1="'+m.l+'" x2="'+(W-m.r)+'" y1="'+Y(v)+'" y2="'+Y(v)+'" stroke="var(--line)"/>'
+      +'<text x="'+(m.l-7)+'" y="'+(Y(v)+4)+'" text-anchor="end" fill="var(--muted)" font-size="11">'+v.toFixed(1)+'</text>';
+  }
+  for(let i=0;i<=6;i++){
+    const v=PMAX*i/6;
+    out+='<text x="'+X(v)+'" y="'+(H-m.b+16)+'" text-anchor="middle" fill="var(--muted)" font-size="11">'+v.toFixed(1)+'</text>';
+  }
+  out+='<text x="'+((m.l+W-m.r)/2)+'" y="'+(H-6)+'" text-anchor="middle" fill="var(--muted)" font-size="12">estimated p(default)</text>'
+    +'<text transform="translate(15 '+((m.t+H-m.b)/2)+') rotate(-90)" text-anchor="middle" fill="var(--muted)" font-size="12">expected loss</text>';
+
+  /* one straight line per action */
+  for(const a of A){
+    out+='<line x1="'+X(0)+'" y1="'+Y(Math.min(LMAX,risk(a,0)))+
+         '" x2="'+X(PMAX)+'" y2="'+Y(Math.min(LMAX,risk(a,PMAX)))+
+         '" stroke="var('+a.c+')" stroke-width="3"/>';
+  }
+
+  /* the current estimate */
+  out+='<line x1="'+X(p)+'" x2="'+X(p)+'" y1="'+m.t+'" y2="'+(H-m.b)+
+       '" stroke="var(--ink)" stroke-dasharray="4 3"/>';
+  out+='<line x1="'+X(Math.max(0,p-eps))+'" x2="'+X(Math.min(PMAX,p+eps))+
+       '" y1="'+(H-m.b-6)+'" y2="'+(H-m.b-6)+'" stroke="var(--ink)" stroke-width="3"/>';
+  $('chart').innerHTML=out;
+}
+
+['pv','ev','hv'].forEach(id=>$(id).addEventListener('input',update));
+update();
+</script></body></html>
