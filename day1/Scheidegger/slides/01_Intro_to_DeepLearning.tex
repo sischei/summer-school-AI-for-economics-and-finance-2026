@@ -735,16 +735,17 @@ Each neuron:
 \]
 
 \begin{itemize}\itemsep1pt
-    \item {\small $b \equiv w_0$ is the \textbf{bias} (shifts the activation)}
-    \item {\small $g(\cdot)$ is a nonlinear \textbf{activation function}}
+    \item {\footnotesize $b \equiv w_0$ is the \textbf{bias} (shifts the activation)}
+    \item {\footnotesize $g(\cdot)$ is the \textbf{activation function}.  Rosenblatt used a
+          \textbf{step}: output $1$ if the sum is positive, else $0$}
+    \item {\footnotesize The weights are now \emphc{learned from data}, not fixed by hand}
 \end{itemize}
 
-\vspace{0.1cm}
-{\footnotesize A weighted linear combination, then a nonlinearity.  \emphc{Without $g$ this is just linear regression.}}
 \end{columns}
 
-\vspace{0.15cm}
-{\footnotesize \emphc{Minsky \& Papert (1969):} one perceptron cannot represent XOR, which is exactly why we need hidden layers.}
+\vspace{0.25cm}
+{\scriptsize \emphc{Without $g$ this is just a linear model.}  The step has no useful derivative, so smooth activations come next.
+\emphc{Minsky \& Papert (1969):} one perceptron cannot represent XOR, which is exactly why we need hidden layers.}
 \end{frame}
 
 % --- Slide 26: Activation Functions ---
