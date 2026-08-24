@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LoRA — rank constrains directions, not magnitude</title>
+<style>
+:root{--accent:#22577d;--paper:#f3eee4;--panel:#fbf8f1;--ink:#1b1915;--muted:#6c6457;--line:#d9d0c0;--blue:#22577d;--cyan:#5e92b5;--red:#9c4a32;--green:#2f6f55}
+@media(prefers-color-scheme:dark){:root{--accent:#5b93c9;--paper:#15130f;--panel:#1f1c16;--ink:#ece6da;--muted:#aaa094;--line:#39342c;--blue:#67a4d8;--cyan:#91bddc;--red:#d18668;--green:#79b795}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 system-ui,sans-serif}
+.wrap{max-width:980px;margin:auto;padding:40px 22px 70px}
+h1{font:500 clamp(2rem,6vw,3.4rem)/1.02 Georgia,serif;margin:0}h1 em{color:var(--blue)}
+.sub,.note{color:var(--muted)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;margin-top:18px}
+.honesty{border-left:4px solid var(--green)}
+.prompt{border-left:4px solid var(--blue);padding:10px 14px;margin:0}
+.ctl{margin:12px 0 4px}
+.ctl label{display:flex;justify-content:space-between;color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.03em}
+.ctl b,.mono{font-family:ui-monospace,monospace;color:var(--blue)}
+input[type=range]{width:100%;accent-color:var(--blue)}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:0 22px}
+.mats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:6px}
+.mat{text-align:center}
+.mat canvas{width:100%;height:auto;image-rendering:pixelated;border:1px solid var(--line);border-radius:4px;display:block}
+.mat span{display:block;font:.76rem/1.4 ui-monospace,monospace;color:var(--muted);margin-top:6px}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:6px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:16px}
+.stat{border-top:3px solid var(--cyan);padding:8px}
+.stat span{display:block;color:var(--muted);font-size:.68rem;text-transform:uppercase}
+.stat b{font:600 .95rem ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.stat i{font-style:normal;font-size:.7rem;color:var(--muted);font-family:ui-monospace,monospace}
+.warn{color:var(--red)!important}.ok{color:var(--green)!important}
+.take{color:var(--green);font-weight:700}
+.flag{color:var(--red);font-weight:700}
+svg{width:100%;height:auto;display:block}
+h3{font:500 1rem Georgia,serif;margin:0 0 4px}
+.legend{display:flex;flex-wrap:wrap;gap:5px 18px;font-size:.76rem;color:var(--muted);margin-top:6px}
+.legend i{display:inline-block;width:15px;height:3px;vertical-align:3px;margin-right:5px}
+@media(max-width:760px){.grid3,.charts{grid-template-columns:1fr}}
+</style></head><body><main class="wrap">
+
+<h1>LoRA: <em>a subspace, not a leash</em></h1>
+<p class="sub">The low-rank update is the standard way to adapt a model cheaply. It is also routinely mistaken for a safety mechanism, and the arithmetic says otherwise.</p>
+
+<section class="panel honesty"><b>Epistemic status:</b> exact linear algebra on a 32&times;32 target update built from a <em>declared</em> spectrum, so the rank-<em>r</em> truncation is the Eckart&ndash;Young optimum by construction rather than a numerical approximation. Parameter counts are reported both for this toy and at a realistic <span class="mono">d = k = 4096</span>. Nothing here is trained.</section>
+
+<section class="panel"><p class="prompt"><b>Predict first.</b> Set the rank to <b>1</b> — the most constrained adapter there is. Is there now a limit to how far the adapted weights can move from the base model? Commit to yes or no before you touch the magnitude slider.</p></section>
+
+<section class="panel">
+ <div class="grid3">
+  <div class="ctl"><label>adapter rank <em>r</em> <b id="rOut"></b></label>
+    <input id="rank" type="range" min="1" max="32" step="1" value="4"></div>
+  <div class="ctl"><label>spectrum decay &gamma; <b id="gOut"></b></label>
+    <input id="decay" type="range" min="0" max="2.5" step="0.05" value="1.2"></div>
+  <div class="ctl"><label>update magnitude <em>c</em> <b id="cOut"></b></label>
+    <input id="scale" type="range" min="0.1" max="40" step="0.1" value="1"></div>
+ </div>
+
+ <div class="stats">
+  <div class="stat"><span>rank(BA)</span><b id="rk"></b><i>&le; r, always</i></div>
+  <div class="stat"><span>&#8214;BA&#8214;<sub>F</sub></span><b id="fro"></b><i id="froNote"></i></div>
+  <div class="stat"><span>energy captured</span><b id="cap"></b><i>&Sigma;<sub>i&le;r</sub>s&sup2; / &Sigma;s&sup2;</i></div>
+  <div class="stat"><span>relative residual</span><b id="res"></b><i>&#8214;&Delta;W&minus;BA&#8214;/&#8214;&Delta;W&#8214;</i></div>
+  <div class="stat"><span>trainable, this toy</span><b id="ptoy"></b><i>r(d+k), d=k=32</i></div>
+  <div class="stat"><span>trainable, d=k=4096</span><b id="preal"></b><i>share of dk</i></div>
+ </div>
+</section>
+
+<section class="panel">
+ <h3>The update, its rank-<em>r</em> part, and what is left over</h3>
+ <div class="mats">
+  <div class="mat"><canvas id="cT" width="32" height="32"></canvas><span>target &Delta;W*</span></div>
+  <div class="mat"><canvas id="cA" width="32" height="32"></canvas><span>BA (rank <em id="rlab">4</em>)</span></div>
+  <div class="mat"><canvas id="cR" width="32" height="32"></canvas><span>residual</span></div>
+ </div>
+ <p class="note" style="font-size:.82rem;margin-top:10px">All three share one colour scale, fixed by the target — so a residual that <em>looks</em> empty really is small.</p>
+</section>
+
+<section class="panel">
+ <div class="charts">
+  <div>
+   <h3>The singular spectrum</h3>
+   <svg id="spec" viewBox="0 0 440 260" role="img" aria-label="Singular values, with the first r retained"></svg>
+   <div class="legend"><span><i style="background:var(--blue)"></i>kept by the adapter</span><span><i style="background:var(--line)"></i>discarded</span></div>
+  </div>
+  <div>
+   <h3>Energy captured against rank</h3>
+   <svg id="curve" viewBox="0 0 440 260" role="img" aria-label="Cumulative captured energy against rank"></svg>
+   <div class="legend"><span>&#9679; current <em>r</em></span><span>the sweep <em>is</em> the diagnosis</span></div>
+  </div>
+ </div>
+</section>
+
+<section class="panel"><p class="prompt"><span class="take">Debrief — part one: the answer is <b>no</b>.</span>
+Hold the rank at 1 and drag the magnitude. <span class="mono">rank(BA)</span> never moves; <span class="mono">&#8214;BA&#8214;<sub>F</sub></span> grows without bound. Formally, take <span class="mono">B = c·e<sub>1</sub></span> and <span class="mono">A = c·e<sub>1</sub><sup>T</sup></span>: the product has rank one and Frobenius norm <span class="mono">c&sup2;</span>. Rank restricts <em>which directions</em> the weights may move in. It places no bound whatever on <em>how far</em>. Catastrophic forgetting at <span class="mono">r = 4</span> is entirely possible, and if you want a magnitude constraint you must add one — weight decay on the adapter, or an explicit KL to the base model's outputs.</p></section>
+
+<section class="panel"><p class="prompt"><span class="flag">Debrief — part two: read the sweep, don't just tune it.</span>
+Now move &gamma;. A <em>fast-decaying</em> spectrum means a handful of directions carry the update: <span class="mono">r = 4</span> captures nearly everything and the residual goes dark. Flatten the spectrum and the same <span class="mono">r</span> captures almost nothing — the residual is as bright as the target. So the rank sweep is not hyperparameter tuning; it is a <b>measurement of how far your domain sits from the base model</b>. Loss still falling at <span class="mono">r = 64</span> says the required update is genuinely high-dimensional, and domain-adaptive pretraining is probably the cheaper instrument. Flat beyond <span class="mono">r = 4</span> says you were only adjusting a task boundary.</p></section>
+
+<p class="note" style="margin-top:22px">Static page. No network requests, no external fonts or libraries — it runs offline from a USB drive.</p>
+
+</main><script>
+'use strict';
+const $=x=>document.getElementById(x);
+const N=32;                                   // toy matrix is N x N
+
+/* ---- seeded PRNG, so the picture is identical in every rehearsal ---- */
+let seed=20260826;
+function rnd(){seed=(1664525*seed+1013904223)>>>0;return seed/4294967296}
+function gauss(){let u=0,v=0;while(u===0)u=rnd();while(v===0)v=rnd();
+  return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+
+/* ---- one fixed pair of orthonormal bases, by Gram-Schmidt ---- */
+function orthobasis(){
+  const B=[];
+  for(let i=0;i<N;i++){
+    let v=Array.from({length:N},()=>gauss());
+    for(const u of B){                        // project out what is already spanned
+      let d=0; for(let j=0;j<N;j++) d+=u[j]*v[j];
+      for(let j=0;j<N;j++) v[j]-=d*u[j];
+    }
+    let n=Math.sqrt(v.reduce((a,x)=>a+x*x,0));
+    B.push(v.map(x=>x/n));
+  }
+  return B;
+}
+const U=orthobasis(), V=orthobasis();
+
+/* ---- the target update: declared spectrum, so truncation is exact ---- */
+function spectrum(gamma){
+  const s=[];
+  for(let i=1;i<=N;i++) s.push(Math.pow(i,-gamma));
+  const m=s[0]; return s.map(x=>x/m);          // normalise the leading value to 1
+}
+/* sum_{i<r} s_i u_i v_i^T  -- accumulate only the kept terms */
+function reconstruct(s,r,c){
+  const M=Array.from({length:N},()=>new Float64Array(N));
+  for(let i=0;i<r;i++){
+    const w=c*s[i], u=U[i], v=V[i];
+    if(w===0) continue;
+    for(let a=0;a<N;a++){const wu=w*u[a]; for(let b=0;b<N;b++) M[a][b]+=wu*v[b];}
+  }
+  return M;
+}
+function paint(id,M,lim){
+  const cv=$(id), ctx=cv.getContext('2d'), img=ctx.createImageData(N,N);
+  const css=getComputedStyle(document.documentElement);
+  const hex=t=>{const h=css.getPropertyValue(t).trim().replace('#','');
+    return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];};
+  const bg=hex('--panel'), pos=hex('--blue'), neg=hex('--red');
+  for(let a=0;a<N;a++)for(let b=0;b<N;b++){
+    const t=Math.max(-1,Math.min(1,M[a][b]/lim)), m=Math.abs(t), col=t>=0?pos:neg;
+    const o=4*(a*N+b);
+    for(let ch=0;ch<3;ch++) img.data[o+ch]=Math.round(bg[ch]+(col[ch]-bg[ch])*m);
+    img.data[o+3]=255;
+  }
+  ctx.putImageData(img,0,0);
+}
+
+function update(){
+  const r=+$('rank').value, g=+$('decay').value, c=+$('scale').value;
+  $('rOut').textContent=r; $('gOut').textContent=g.toFixed(2); $('cOut').textContent=c.toFixed(1);
+  $('rlab').textContent=r;
+
+  const s=spectrum(g);
+  const total=s.reduce((a,x)=>a+x*x,0);
+  const kept=s.slice(0,r).reduce((a,x)=>a+x*x,0);
+
+  const T=reconstruct(s,N,c), A=reconstruct(s,r,c);
+  const R=Array.from({length:N},(_,a)=>Float64Array.from({length:N},(_,b)=>T[a][b]-A[a][b]));
+  let lim=0; for(let a=0;a<N;a++)for(let b=0;b<N;b++) lim=Math.max(lim,Math.abs(T[a][b]));
+  paint('cT',T,lim); paint('cA',A,lim); paint('cR',R,lim);
+
+  const fro=c*Math.sqrt(kept);
+  $('rk').textContent=r;
+  $('fro').textContent=fro.toFixed(2);
+  $('froNote').textContent=c>8?'unbounded in c':'grows with c';
+  $('froNote').className=c>8?'warn':'';
+  $('cap').textContent=(100*kept/total).toFixed(1)+'%';
+  $('res').textContent=Math.sqrt(Math.max(0,1-kept/total)).toFixed(3);
+  $('ptoy').textContent=(r*(N+N)).toLocaleString();
+  const real=r*(4096+4096)/(4096*4096);
+  $('preal').textContent=(100*real).toFixed(2)+'%';
+
+  drawSpec(s,r,c); drawCurve(s,r);
+}
+
+function frame(W,H,p,xl,yl){
+  return '<text x="'+(p.l+(W-p.l-p.r)/2)+'" y="'+(H-4)+'" text-anchor="middle" fill="var(--muted)" font-size="11">'+xl+'</text>'
+   +'<text transform="translate(11 '+(p.t+(H-p.t-p.b)/2)+') rotate(-90)" text-anchor="middle" fill="var(--muted)" font-size="11">'+yl+'</text>';
+}
+
+function drawSpec(s,r,c){
+  const W=440,H=260,p={l:46,r:12,t:12,b:34};
+  const bw=(W-p.l-p.r)/N, hi=c*s[0]*1.06;
+  const ym=v=>H-p.b-(v/hi)*(H-p.t-p.b);
+  let out='';
+  for(let i=0;i<=4;i++){const v=hi*i/4;
+    out+='<line x1="'+p.l+'" x2="'+(W-p.r)+'" y1="'+ym(v)+'" y2="'+ym(v)+'" stroke="var(--line)"/>'
+      +'<text x="'+(p.l-5)+'" y="'+(ym(v)+3.5)+'" text-anchor="end" fill="var(--muted)" font-size="10">'+v.toFixed(1)+'</text>';}
+  for(let i=0;i<N;i++){
+    const v=c*s[i], x=p.l+i*bw;
+    out+='<rect x="'+(x+0.6)+'" y="'+ym(v)+'" width="'+(bw-1.2)+'" height="'+(H-p.b-ym(v))
+      +'" fill="'+(i<r?'var(--blue)':'var(--line)')+'"/>';
+  }
+  out+='<line x1="'+(p.l+r*bw)+'" x2="'+(p.l+r*bw)+'" y1="'+p.t+'" y2="'+(H-p.b)+'" stroke="var(--accent)" stroke-dasharray="4 3"/>';
+  out+=frame(W,H,p,'singular value index','s_i (scaled by c)');
+  $('spec').innerHTML=out;
+}
+
+function drawCurve(s,r){
+  const W=440,H=260,p={l:46,r:12,t:12,b:34};
+  const total=s.reduce((a,x)=>a+x*x,0);
+  const xm=i=>p.l+(i/N)*(W-p.l-p.r), ym=v=>H-p.b-v*(H-p.t-p.b);
+  let acc=0; const pts=[];
+  for(let i=0;i<N;i++){acc+=s[i]*s[i]; pts.push([i+1,acc/total]);}
+  let out='';
+  for(let i=0;i<=4;i++){const v=i/4;
+    out+='<line x1="'+p.l+'" x2="'+(W-p.r)+'" y1="'+ym(v)+'" y2="'+ym(v)+'" stroke="var(--line)"/>'
+      +'<text x="'+(p.l-5)+'" y="'+(ym(v)+3.5)+'" text-anchor="end" fill="var(--muted)" font-size="10">'+(100*v).toFixed(0)+'%</text>';}
+  out+='<polyline points="'+pts.map(q=>xm(q[0])+','+ym(q[1])).join(' ')+'" fill="none" stroke="var(--blue)" stroke-width="3"/>';
+  const cur=pts[r-1];
+  out+='<line x1="'+xm(cur[0])+'" x2="'+xm(cur[0])+'" y1="'+ym(cur[1])+'" y2="'+(H-p.b)+'" stroke="var(--accent)" stroke-dasharray="3 3"/>';
+  out+='<circle cx="'+xm(cur[0])+'" cy="'+ym(cur[1])+'" r="5" fill="var(--accent)"/>';
+  out+=frame(W,H,p,'rank r','cumulative energy');
+  $('curve').innerHTML=out;
+}
+
+['rank','decay','scale'].forEach(id=>$(id).addEventListener('input',update));
+update();
+</script></body></html>
