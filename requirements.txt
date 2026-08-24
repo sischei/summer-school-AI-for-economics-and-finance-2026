@@ -1,19 +1,28 @@
-# Summer School on AI for Economics and Finance 2026 - Day 1
-#
-# Covers the Day-1 code of Simon Scheidegger (deep learning intro, Deep Equilibrium
-# Nets, deep surrogates) and Yucheng Yang (DeepHAM, Structural RL).
+# Summer School on AI for Economics and Finance 2026
+# Deep learning for dynamic stochastic models - Day 1 and Yang's Day-2 session.
 #
 #   python -m venv .venv && source .venv/bin/activate
 #   pip install -r requirements.txt
 #
-# Python 3.11 or 3.12 recommended (SRL requires >= 3.11; Scheidegger's code runs on
-# 3.10+). No GPU required for any Day-1 notebook.
+# Covers:
+#   Day 1  Scheidegger - deep learning intro, Deep Equilibrium Nets, deep surrogates
+#   Day 1  Yang        - DeepHAM, Structural RL
+#   Day 2  Scheidegger - PINNs
+#   Day 2  Yang        - DeepHAM / DeepSAM practical session
+#
+# Day 3 (Leippold, LLMs and sequence modelling) needs a separate Hugging Face stack
+# (transformers, bertviz, captum, sentence-transformers, yfinance, sec-api); those
+# notebooks install it themselves in their first cell.
+#
+# Python 3.11 or 3.12 recommended (SRL requires >= 3.11; the rest runs on 3.10+).
+# No GPU required.
 
 # --- scientific core (every session) ---
 numpy>=1.26
 scipy>=1.11
 matplotlib>=3.8
 pandas>=2.0
+seaborn>=0.13
 
 # --- Scheidegger: 01_deep_learning_intro, 03_deep_surrogates ---
 scikit-learn>=1.3
@@ -25,7 +34,7 @@ scikit-learn>=1.3
 tensorflow>=2.16
 
 # --- PyTorch ---
-# Scheidegger 01_05 and all of 03_deep_surrogates.
+# Scheidegger 01_05, all of 03_deep_surrogates, and the Day-2 PINNs notebooks.
 torch>=2.2
 
 # --- Yang: DeepHAM (day1/Yang/code/DeepHAM_nuvolos) ---
@@ -43,6 +52,10 @@ numba>=0.59
 jax>=0.4.35
 jaxlib>=0.4.35
 optax>=0.2
+
+# --- Yang: DeepSAM configuration ---
+hydra-core>=1.3
+omegaconf>=2.3
 
 # --- notebooks ---
 jupyterlab>=4.0
