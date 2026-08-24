@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Temperature changes the trigger, not the ranking</title>
+  <style>
+    :root{--accent:#22577d;--paper:#f3eee4;--panel:#fbf8f1;--ink:#1b1915;--muted:#6c6457;--line:#d9d0c0;--blue:#22577d;--cyan:#5e92b5;--red:#9c4a32;--green:#2f6f55;--amber:#a9762e;--sand:#efe7d7}
+    @media(prefers-color-scheme:dark){:root{--accent:#5b93c9;--paper:#15130f;--panel:#1f1c16;--ink:#ece6da;--muted:#aaa094;--line:#39342c;--blue:#67a4d8;--cyan:#91bddc;--red:#d18668;--green:#79b795;--amber:#d8a656;--sand:#26221b}}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 system-ui,sans-serif}
+    main{max-width:1180px;margin:auto;padding:34px 20px 60px}
+    h1{font:500 clamp(28px,4.4vw,44px)/1.03 Georgia,serif;margin:0 0 10px}
+    h1 em{color:var(--blue);font-style:italic}
+    h2{font:500 17px Georgia,serif;margin:0 0 10px}
+    p{margin:6px 0} a{color:var(--blue)}
+    .eyebrow{font:700 11px ui-monospace,monospace;letter-spacing:.11em;text-transform:uppercase;color:var(--muted)}
+    .lede{max-width:840px;color:var(--muted);font-size:17px}
+    .bar{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0}
+    .tag{background:var(--sand);color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:5px 10px;font-size:12px;font-weight:600}
+    .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}
+    .question{border-left:4px solid var(--blue)}
+    .warn{border-left:4px solid var(--red)}
+    .answer{display:none;margin-top:10px;color:var(--ink)}.answer.open{display:block}
+    label{display:block;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-top:15px}
+    .row{display:flex;align-items:center;gap:10px}.row input[type=range]{flex:1;accent-color:var(--blue)}
+    .value{font-family:ui-monospace,monospace;font-weight:700;min-width:54px;text-align:right;color:var(--blue)}
+    select,button{font:inherit;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);padding:8px 10px}
+    button{cursor:pointer;font-weight:700}
+    button.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+    button.ghost{background:transparent;color:var(--blue);padding:6px 9px;font-size:12.5px}
+    button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+    .grid{display:grid;grid-template-columns:330px 1fr;gap:16px}
+
+    /* hero: the decision, and the thing that did not move */
+    .verdict{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+    .card{border:1px solid var(--line);border-radius:11px;padding:14px 16px;background:var(--sand)}
+    .card.moves{border-color:var(--blue);box-shadow:inset 3px 0 0 var(--blue)}
+    .card .k{font:700 11px ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+    .card .big{font:700 38px/1.05 ui-monospace,monospace;color:var(--blue);margin:4px 0 2px}
+    .card.locked .big{color:var(--muted)}
+    .card .sub{font-size:12.5px;color:var(--muted)}
+
+    .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:16px}
+    .metric{border:1px solid var(--line);border-top-width:3px;border-radius:9px;padding:10px;background:var(--panel)}
+    .metric.locked{border-top-color:var(--muted)}.metric.moves{border-top-color:var(--blue)}
+    .metric .k{color:var(--muted);font-size:10.5px;text-transform:uppercase;font-weight:700;letter-spacing:.05em}
+    .metric .v{font:700 21px ui-monospace,monospace}
+    .metric .d{font-size:11px;color:var(--muted);font-family:ui-monospace,monospace}
+    .metric .g{font-size:11.5px;color:var(--muted);margin-top:5px;line-height:1.35}
+    .flag{font:700 9.5px ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;float:right}
+    .flag.l{color:var(--muted)}.flag.m{color:var(--blue)}
+
+    .chart{border:1px solid var(--line);border-radius:10px;padding:14px;background:var(--panel);margin-bottom:14px}
+    svg{width:100%;height:auto;display:block}
+    .axis{stroke:var(--muted);stroke-width:1}.gridline{stroke:var(--line);stroke-width:1}
+    .ideal{stroke:var(--muted);stroke-width:1.5;stroke-dasharray:5 5}
+    /* bin rings and per-statement dots are styled inline in renderChart */
+
+    .table-wrap{overflow:auto;margin-top:16px;border:1px solid var(--line);border-radius:10px}
+    table{width:100%;border-collapse:collapse;min-width:800px;background:var(--panel)}
+    th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+    th{position:sticky;top:0;background:var(--sand);font:700 11px ui-monospace,monospace;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+    td.num{font-family:ui-monospace,monospace;text-align:right}
+    .pill{display:inline-block;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:700;border:1px solid var(--line)}
+    .pos{color:var(--green)}.neg{color:var(--red)}
+    tr.act{background:var(--sand)}
+    tr.wrong td:first-child{box-shadow:inset 3px 0 0 var(--red)}
+    .meta{color:var(--muted);font-size:12.5px}
+    .foot{margin-top:16px;font-size:12px;color:var(--muted)}
+    @media(max-width:900px){.grid,.verdict{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}}
+    @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+  </style>
+</head>
+<body><main>
+  <div class="eyebrow">Session II · Domain Adaptation · cached logits, no model download</div>
+  <h1>Temperature changes <em>the trigger</em>, not the ranking</h1>
+  <p class="lede">One positive number divides every logit. Nobody's prediction changes, no ranking moves — and the queue of statements a human has to read is cut by two thirds. That gap is the lab.</p>
+  <div class="bar">
+    <span class="tag">24 normalized SEC statements</span>
+    <span class="tag">12 calibration · 12 test</span>
+    <span class="tag">T is fitted on the calibration split only</span>
+    <span class="tag">the test split is never touched</span>
+  </div>
+
+  <section class="panel question">
+    <h2>Predict before you fit</h2>
+    <p>Divide every logit by one positive temperature. Which of these can change — the ranking, accuracy at the 50% line, NLL, or the set of statements sent to an analyst at an 85% threshold?</p>
+    <button id="reveal">Reveal the invariant</button>
+    <p id="answer" class="answer"><strong>Ranking and the 50% decision cannot change.</strong> Dividing by <em>T</em>&nbsp;&gt;&nbsp;0 preserves the order of the logits and fixes the sign, so the predicted label is untouched. NLL, Brier and ECE all move, because they score the <em>probability</em>. And a threshold above 50% can move the action set a long way.</p>
+  </section>
+
+  <div class="grid" style="margin-top:16px">
+    <aside class="panel">
+      <h2>Controls</h2>
+      <label for="split">Evaluation rows</label>
+      <select id="split"><option value="test">Untouched test split</option><option value="calibration">Calibration split</option></select>
+      <label for="group">Statement group</label>
+      <select id="group"><option value="all">All groups</option><option>headline</option><option>segment</option><option>product</option><option>cost</option><option>margin</option></select>
+      <label for="temp">Temperature T &mdash; log scale</label>
+      <div class="row"><input id="temp" type="range" min="-1.30" max="1.70" value="0" step="0.005"><span id="tempV" class="value">1.00</span></div>
+      <div class="row" style="margin-top:7px"><button id="poleLow" class="ghost">T &rarr; 0</button><button id="poleHigh" class="ghost">T &rarr; &infin;</button></div>
+      <label for="threshold">Send-to-analyst threshold</label>
+      <div class="row"><input id="threshold" type="range" min="0.50" max="0.95" value="0.85" step="0.01"><span id="thresholdV" class="value">85%</span></div>
+      <div class="row" style="margin-top:18px"><button id="fit" class="primary">Fit T on calibration</button><button id="reset">Reset</button></div>
+      <p class="meta" style="margin-top:15px"><strong>Run it in this order.</strong> Fit T and read the two cards. Then set the group to <code>cost</code>. Then drag the threshold to 0.75. Then press each pole: <b>T&nbsp;&rarr;&nbsp;0</b> is the confident liar; <b>T&nbsp;&rarr;&nbsp;&infin;</b> only ever says the base rate.</p>
+    </aside>
+
+    <section class="panel">
+      <div class="verdict">
+        <div class="card moves"><span class="k">Sent to an analyst</span><div class="big" id="actionCount">—</div><div class="sub" id="actionSub"></div></div>
+        <div class="card locked"><span class="k">Correct at the 50% line</span><div class="big" id="accCount">—</div><div class="sub" id="accSub"></div></div>
+      </div>
+
+      <div class="metrics" id="metrics"></div>
+
+      <div class="chart">
+          <h2>Reliability diagram</h2>
+          <div class="meta">Each small dot is one statement, at its probability and its actual outcome (top = favorable). Amber is raw, blue is the current <em>T</em>, and the stub between them is what temperature did to it. Large rings are bin means, area ~ count. <b>No line joins them</b> — at this sample size there is nothing continuous to interpolate. Rings below the diagonal claim more than they deliver.</div>
+        <svg id="chart" viewBox="0 0 800 360" aria-label="Reliability diagram"></svg>
+      </div>
+      <div class="panel warn" style="padding:14px;margin-bottom:14px">
+          <span class="eyebrow">What calibration cannot fix</span>
+          <h2 style="margin-top:4px">Confidently wrong</h2>
+          <p style="font-size:13.5px">Every <code>cost</code> row is gold-labelled <strong>unfavorable</strong> and scored strongly <strong>favorable</strong>. The scorer sees <em>increased</em> and a large number and reads good news; a rising cost is bad news.</p>
+          <p style="font-size:13.5px">Fitting T pushes those below 85% and they leave the queue — but they are still wrong, still ranked above statements that deserve the slot. Drag the threshold to 0.75 and they walk straight back in.</p>
+        <p class="meta" id="costNote"></p>
+      </div>
+
+      <div class="table-wrap"><table>
+        <thead><tr><th>Statement</th><th>Group</th><th>Gold</th><th>Raw p</th><th>Calibrated p</th><th>Action</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table></div>
+      <p class="meta" style="margin-top:8px">A red edge marks a row the scorer gets wrong at the 50% line — wrong before calibration and wrong after.</p>
+    </section>
+  </div>
+
+  <p class="foot">Sources: <a href="https://www.sec.gov/Archives/edgar/data/789019/000095017024087843/msft-20240630.htm">Microsoft FY2024 10-K</a> and <a href="https://www.sec.gov/Archives/edgar/data/789019/000095017025100235/msft-20250630.htm">Microsoft FY2025 10-K</a>. Text normalized and instructor-labelled; provenance and the CSV live in <code>teaching-data/</code>. Static page, no network calls.</p>
+</main>
+<script>
+const D=[
+['calibration','headline',1,3.60,'Fiscal 2024 operating income increased 24% to $109.4 billion.'],['calibration','product',0,-3.07,'Office Commercial products revenue declined 16% as customers shifted to cloud offerings.'],['calibration','product',1,4.00,'Gaming revenue increased 39%, including the Activision Blizzard acquisition.'],['calibration','margin',0,-2.13,'Microsoft Cloud gross margin percentage decreased two points, partly from scaling AI infrastructure.'],['calibration','cost',0,2.40,'General and administrative expense increased 6%.'],['calibration','headline',1,3.00,'Fiscal 2025 revenue increased 15% to $281.7 billion.'],['calibration','cost',0,3.27,'Cost of revenue increased 19%, driven by growth in Microsoft Cloud.'],['calibration','margin',0,-2.07,'Azure gross margin percentage decreased because of scaling AI infrastructure.'],['calibration','product',1,2.13,'Windows and Devices revenue increased 2%.'],['calibration','product',1,2.87,'Search and news advertising revenue increased 13%.'],['calibration','segment',1,2.87,'Productivity and Business Processes revenue increased 13% to $120.8 billion.'],['calibration','segment',1,3.20,'More Personal Computing operating income increased 18% to $14.2 billion.'],
+['test','product',1,3.53,'Microsoft Cloud revenue increased 23% to $137.4 billion.'],['test','product',1,2.60,'LinkedIn revenue increased 9%, with growth across all lines of business.'],['test','product',0,-3.00,'Devices revenue decreased 15% because of lower console volume.'],['test','cost',0,2.53,'Research and development expense increased 8% to $29.5 billion.'],['test','headline',1,3.13,'Fiscal 2025 operating income increased 17% to $128.5 billion.'],['test','product',0,-2.20,'Server products revenue decreased 3% as purchasing shifted to cloud offerings.'],['test','cost',0,2.47,'Intelligent Cloud operating expenses increased 7% with cloud and AI engineering investment.'],['test','product',1,2.60,'Gaming revenue increased 9%, driven by Xbox content and services.'],['test','cost',0,2.67,'Research and development expense increased 10% to $32.5 billion.'],['test','segment',1,3.40,'Intelligent Cloud revenue increased to $106.3 billion from $87.5 billion.'],['test','headline',1,3.07,'Fiscal 2025 net income increased 16% to $101.8 billion.'],['test','margin',0,-2.07,'Microsoft Cloud gross margin percentage decreased because of scaling AI infrastructure.']
+].map((r,i)=>({id:i,split:r[0],group:r[1],y:r[2],z:r[3],text:r[4]}));
+
+const $=s=>document.querySelector(s), sig=z=>1/(1+Math.exp(-z)), clip=p=>Math.max(1e-9,Math.min(1-1e-9,p));
+const state={T:1,threshold:.85};
+
+function subset(split=$('#split').value, group=$('#group').value){
+  return D.filter(d=>d.split===split&&(group==='all'||d.group===group));}
+function probs(rows,T){return rows.map(d=>sig(d.z/T));}
+/* NLL: average -log(probability assigned to the label that actually occurred) */
+function nll(rows,ps){return rows.reduce((s,d,i)=>s-(d.y*Math.log(clip(ps[i]))+(1-d.y)*Math.log(clip(1-ps[i]))),0)/rows.length;}
+function brier(rows,ps){return rows.reduce((s,d,i)=>s+(ps[i]-d.y)**2,0)/rows.length;}
+function acc(rows,ps){return rows.filter((d,i)=>(ps[i]>=.5)===Boolean(d.y)).length/rows.length;}
+function bins(rows,ps){const out=[];for(let b=0;b<5;b++){const ids=ps.map((p,i)=>[p,i]).filter(x=>x[0]>=b/5&&(b===4?x[0]<=1:x[0]<(b+1)/5));if(ids.length){out.push({p:ids.reduce((s,x)=>s+x[0],0)/ids.length,y:ids.reduce((s,x)=>s+rows[x[1]].y,0)/ids.length,n:ids.length});}}return out;}
+function ece(rows,ps){return bins(rows,ps).reduce((s,b)=>s+b.n/rows.length*Math.abs(b.p-b.y),0);}
+const fmt=x=>Number.isFinite(x)?x.toFixed(3):'—';
+
+function fitTemperature(){
+  const cal=D.filter(d=>d.split==='calibration');
+  let best={T:1,loss:Infinity};
+  for(let i=0;i<=2000;i++){const T=Math.pow(10,-1.3+i*(3.0/2000)),loss=nll(cal,probs(cal,T));if(loss<best.loss)best={T,loss};}
+  state.T=best.T;$('#temp').value=Math.log10(best.T);render();}
+
+function renderChart(rows,raw,cal,thr){
+  const svg=$('#chart'),W=800,H=360,L=64,R=24,T=24,B=48,x=p=>L+p*(W-L-R),y=p=>H-B-p*(H-T-B);
+  let s='';
+  for(let i=0;i<=5;i++){const q=i/5;
+    s+=`<line class="gridline" x1="${x(q)}" y1="${y(0)}" x2="${x(q)}" y2="${y(1)}"/><line class="gridline" x1="${x(0)}" y1="${y(q)}" x2="${x(1)}" y2="${y(q)}"/>`
+      +`<text x="${x(q)}" y="${H-16}" text-anchor="middle" font-size="14" fill="currentColor" opacity=".6">${q.toFixed(1)}</text>`
+      +`<text x="${L-10}" y="${y(q)+5}" text-anchor="end" font-size="14" fill="currentColor" opacity=".6">${q.toFixed(1)}</text>`;}
+  s+=`<line class="axis" x1="${L}" y1="${y(0)}" x2="${x(1)}" y2="${y(0)}"/><line class="axis" x1="${L}" y1="${y(0)}" x2="${L}" y2="${y(1)}"/><line class="ideal" x1="${x(0)}" y1="${y(0)}" x2="${x(1)}" y2="${y(1)}"/>`;
+
+  /* the trigger, drawn on the axis it actually acts on */
+  s+=`<line x1="${x(thr)}" y1="${y(0)}" x2="${x(thr)}" y2="${y(1)}" stroke="var(--red)" stroke-width="1.8" stroke-dasharray="6 4"/>`
+    +`<text x="${x(thr)+(thr>.7?-6:6)}" y="${T+14}" text-anchor="${thr>.7?'end':'start'}" font-size="13" `
+    +`font-family="ui-monospace,monospace" fill="var(--red)">${Math.round(thr*100)}% trigger</text>`;
+
+  /* one dot per statement: its probability, its actual 0/1 outcome.
+     The stub shows where temperature moved it. */
+  rows.forEach((d,i)=>{
+    const yy=y(d.y);
+    if(Math.abs(x(cal[i])-x(raw[i]))>2)
+      s+=`<line x1="${x(raw[i])}" y1="${yy}" x2="${x(cal[i])}" y2="${yy}" stroke="currentColor" stroke-width="1.4" opacity=".3"/>`;
+    s+=`<circle cx="${x(raw[i])}" cy="${yy}" r="3.4" fill="var(--amber)" opacity=".5"/>`
+      +`<circle cx="${x(cal[i])}" cy="${yy}" r="4.4" fill="var(--blue)" opacity=".78">`
+      +`<title>${d.y?'favorable':'unfavorable'} — raw ${raw[i].toFixed(2)} to calibrated ${cal[i].toFixed(2)}</title></circle>`;});
+
+  /* bin means, area ~ count. Deliberately unjoined: with this many rows
+     there is nothing continuous to interpolate between bins. */
+  for(const [bs,col] of [[bins(rows,raw),'var(--amber)'],[bins(rows,cal),'var(--blue)']])
+    s+=bs.map(b=>`<circle cx="${x(b.p)}" cy="${y(b.y)}" r="${6+Math.sqrt(b.n)*2.6}" fill="${col}" `
+      +`fill-opacity=".18" stroke="${col}" stroke-width="2.6">`
+      +`<title>n=${b.n}; mean confidence ${b.p.toFixed(2)}; observed frequency ${b.y.toFixed(2)}</title></circle>`).join('');
+
+  s+=`<text x="${(L+x(1))/2}" y="${H-2}" text-anchor="middle" font-size="15" fill="currentColor" opacity=".75">predicted probability</text>`
+    +`<text transform="translate(16 ${(T+y(0))/2}) rotate(-90)" text-anchor="middle" font-size="15" fill="currentColor" opacity=".75">outcome / observed frequency</text>`;
+  svg.innerHTML=s;}
+
+function render(){
+  state.T=Math.pow(10,+$('#temp').value); state.threshold=+$('#threshold').value;
+  $('#tempV').textContent=state.T.toFixed(2);
+  $('#thresholdV').textContent=Math.round(state.threshold*100)+'%';
+  const rows=subset();
+  if(!rows.length){$('#metrics').innerHTML='<p class="meta">No rows in this subgroup.</p>';$('#rows').innerHTML='';return;}
+  const raw=probs(rows,1), cal=probs(rows,state.T), n=rows.length, pct=Math.round(state.threshold*100);
+
+  /* the two cards: what moved, and what could not */
+  const na=cal.filter(p=>p>=state.threshold).length, nr=raw.filter(p=>p>=state.threshold).length;
+  const ar=Math.round(acc(rows,raw)*n), ac=Math.round(acc(rows,cal)*n);
+  $('#actionCount').textContent=`${na} / ${n}`;
+  $('#actionSub').innerHTML=`at the ${pct}% trigger · raw sent <b>${nr}</b> · calibration ${na===nr?'left the queue unchanged':(na<nr?`removed <b>${nr-na}</b>`:`added <b>${na-nr}</b>`)}`;
+  $('#accCount').textContent=`${ac} / ${n}`;
+  $('#accSub').innerHTML=ar===ac?`raw <b>${ar}</b> · unchanged, and it cannot change: T&nbsp;&gt;&nbsp;0 fixes the sign of every logit`
+                                :`raw <b>${ar}</b> — if these differ, something other than temperature moved`;
+
+  const items=[
+    ['NLL', nll(rows,cal), nll(rows,raw), 'moves',
+     'Average surprise on the label that actually occurred, in nats: &minus;log of the probability you gave it. The same log score as the scaling lab, per label instead of per token. Lower is better.'],
+    ['Brier', brier(rows,cal), brier(rows,raw), 'moves',
+     'Mean squared error of the probability against the 0/1 outcome. Also strictly proper; less punishing of confident mistakes than NLL.'],
+    ['ECE', ece(rows,cal), ece(rows,raw), 'moves',
+     'Average gap between claimed confidence and observed frequency, over 5 bins. The vertical distance in the diagram below.'],
+    ['Accuracy', acc(rows,cal), acc(rows,raw), 'locked',
+     'Share correct at the 50% line. Cannot move under any T &gt; 0.'],
+    ['Sent at '+pct+'%', na/n, nr/n, 'moves',
+     'Share above the trigger. Depends on the probability, not the ranking — which is why it moves when accuracy cannot.'],
+    ['Fitted T', state.T, 1, 'moves',
+     'The divisor. T &gt; 1 pulls every probability toward 0.5; T &lt; 1 sharpens. Fitted by minimising NLL on the calibration split.']
+  ];
+  $('#metrics').innerHTML=items.map(([k,v,r,cls,g])=>
+    `<div class="metric ${cls}"><span class="flag ${cls==='locked'?'l':'m'}">${cls==='locked'?'invariant':'moves'}</span>`
+    +`<div class="k">${k}</div><div class="v">${fmt(v)}</div>`
+    +`<div class="d">raw ${fmt(r)} · &Delta; ${(v-r>=0?'+':'')}${(v-r).toFixed(3)}</div>`
+    +`<div class="g">${g}</div></div>`).join('');
+
+  const costs=rows.filter((d,i)=>d.group==='cost');
+  $('#costNote').innerHTML=costs.length
+    ? `In view: ${costs.length} cost row${costs.length>1?'s':''}, all gold-unfavorable, mean raw p `
+      +`<b>${(rows.filter(d=>d.group==='cost').map((d)=>sig(d.z)).reduce((a,b)=>a+b,0)/costs.length).toFixed(2)}</b>, `
+      +`mean calibrated p <b>${(rows.filter(d=>d.group==='cost').map(d=>sig(d.z/state.T)).reduce((a,b)=>a+b,0)/costs.length).toFixed(2)}</b>.`
+    : 'No cost rows in this view — set the group filter to <code>cost</code>.';
+
+  $('#rows').innerHTML=rows.map((d,i)=>{
+    const wrong=(cal[i]>=.5)!==Boolean(d.y);
+    return `<tr class="${cal[i]>=state.threshold?'act':''} ${wrong?'wrong':''}">`
+      +`<td>${d.text}</td><td><span class="pill">${d.group}</span></td>`
+      +`<td><span class="pill ${d.y?'pos':'neg'}">${d.y?'favorable':'unfavorable'}</span></td>`
+      +`<td class="num">${raw[i].toFixed(3)}</td><td class="num">${cal[i].toFixed(3)}</td>`
+      +`<td>${cal[i]>=state.threshold?'send':'hold'}</td></tr>`;}).join('');
+  renderChart(rows,raw,cal,state.threshold);}
+
+$('#temp').addEventListener('input',render);
+$('#threshold').addEventListener('input',render);
+$('#split').addEventListener('change',render);
+$('#group').addEventListener('change',render);
+$('#fit').addEventListener('click',fitTemperature);
+$('#poleLow').addEventListener('click',()=>{$('#temp').value=-1.3;render();});
+$('#poleHigh').addEventListener('click',()=>{$('#temp').value=1.7;render();});
+$('#reset').addEventListener('click',()=>{$('#temp').value=0;$('#threshold').value=.85;$('#group').value='all';render();});
+$('#reveal').addEventListener('click',()=>$('#answer').classList.toggle('open'));
+render();
+</script></body></html>
