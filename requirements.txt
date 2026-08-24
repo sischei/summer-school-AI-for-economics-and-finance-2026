@@ -1,0 +1,49 @@
+# Summer School on AI for Economics and Finance 2026 - Day 1
+#
+# Covers the Day-1 code of Simon Scheidegger (deep learning intro, Deep Equilibrium
+# Nets, deep surrogates) and Yucheng Yang (DeepHAM, Structural RL).
+#
+#   python -m venv .venv && source .venv/bin/activate
+#   pip install -r requirements.txt
+#
+# Python 3.11 or 3.12 recommended (SRL requires >= 3.11; Scheidegger's code runs on
+# 3.10+). No GPU required for any Day-1 notebook.
+
+# --- scientific core (every session) ---
+numpy>=1.26
+scipy>=1.11
+matplotlib>=3.8
+pandas>=2.0
+
+# --- Scheidegger: 01_deep_learning_intro, 03_deep_surrogates ---
+scikit-learn>=1.3
+
+# --- TensorFlow / Keras 3 ---
+# Scheidegger 01_04, 01_06 and all of 02_deep_equilibrium_nets; all of Yang's DeepHAM.
+# >=2.16 is required: the shipped DeepHAM weights are Keras-3 ".weights.h5" files.
+# DeepHAM is verified on TensorFlow 2.20 / Keras 3.13.
+tensorflow>=2.16
+
+# --- PyTorch ---
+# Scheidegger 01_05 and all of 03_deep_surrogates.
+torch>=2.2
+
+# --- Yang: DeepHAM (day1/Yang/code/DeepHAM_nuvolos) ---
+tqdm>=4.66
+absl-py>=2.0
+quantecon>=0.7
+# quantecon only requires numba>=0.49, which is too old for numpy>=1.26 and fails with
+# "SystemError: initialization of _internal failed". The floor forces a working numba.
+numba>=0.59
+
+# --- Yang: Structural RL tutorials (github.com/StructuralRL/SRL) ---
+# The SRL notebooks live in their own repo; clone it and run "pip install -e ." there.
+# These are its runtime dependencies. Upstream pins jax==0.10.0 for exact
+# reproducibility - install that specific version if you need bit-identical results.
+jax>=0.4.35
+jaxlib>=0.4.35
+optax>=0.2
+
+# --- notebooks ---
+jupyterlab>=4.0
+ipykernel>=6.29
