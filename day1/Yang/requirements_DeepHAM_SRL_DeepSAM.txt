@@ -1,0 +1,19 @@
+python==3.11.0
+jax
+jaxlib
+optax
+numpy
+tqdm
+scipy
+matplotlib
+tensorflow
+quantecon
+pandas
+seaborn
+torch
+hydra-core
+pathlib
+random
+omegaconf
+os
+time
