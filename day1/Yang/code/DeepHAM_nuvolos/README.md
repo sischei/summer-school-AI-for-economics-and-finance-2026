@@ -19,8 +19,10 @@ Reference implementation: <https://github.com/frankhan91/DeepHAM>.
 ## The notebooks
 
 All five live in [`src/`](src), because they import the DeepHAM modules (`param.py`,
-`dataset.py`, `value.py`, `policy.py`) and read `../data`. Open them from there; the first
-code cell locates the directory itself, so they also run from a local clone or from Colab.
+`dataset.py`, `value.py`, `policy.py`) and read `../data`. The first code cell changes into
+`/files/day1/Yang/code/DeepHAM_nuvolos/src` when that path exists (the Nuvolos kernel
+starts in `/files`); anywhere else — a local clone, Colab — open the notebooks from inside
+`src/` and the cell leaves the working directory alone.
 
 | # | Notebook | Topic | Role | Runtime (`smoke`) |
 |---|---|---|---|---|
