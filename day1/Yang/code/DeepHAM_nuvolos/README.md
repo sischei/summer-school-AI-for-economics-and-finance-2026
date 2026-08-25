@@ -56,10 +56,9 @@ and a cell that maps it onto the handful of numbers that drive wall-clock time.
 
 `smoke` exercises every code path — dataset construction, value fitting, the policy loop,
 the periodic value refresh, saving — but is far too short to converge: it lands around
-$K \approx 11$ against the Krusell–Smith level of $K \approx 39$. `teaching` reaches about
-32. `production` is the
-setting behind the published results (the reference run in `data/simul_results` took
-5,278 s).
+$K \approx 11$ against the Krusell–Smith level of $K \approx 39$, while `teaching` reaches
+about 32. `production` is the setting behind the published results (the reference run in
+`data/simul_results` took 5,278 s).
 
 Runs are written to `data/simul_results/KS/game_nn_n50_<exp>_<RUN_MODE>`, so a quick smoke
 run can never overwrite a long one, nor the reference solutions below.
