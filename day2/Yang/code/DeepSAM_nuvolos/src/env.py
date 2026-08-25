@@ -223,8 +223,7 @@ class Environment():
                      f"delta_{self.delta_0}_xi_{self.xi}_beta_{self.beta}_lambda_HL_{self.lam_HL}_"
                      f"nu_{self.nu}_kappa_{self.kappa}_ddelta_{self.d_delta}_{self.prod_type}")
 
-        if not os.path.exists(self.path):
-            os.mkdir(self.path)
+        os.makedirs(self.path, exist_ok=True)
 
     def calc_f(self,x,y):
         """Production function (numpy version)
