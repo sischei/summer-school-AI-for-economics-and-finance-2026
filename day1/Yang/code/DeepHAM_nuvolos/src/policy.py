@@ -52,8 +52,16 @@ class PolicyTrainer():
         self.valid_loss_metric = tf.keras.metrics.Mean('valid_loss', dtype=log_10.dtype)
         train_log_dir = os.path.join(self.config["model_path"], 'logs/', self.config["current_time"], 'pnet_train')
         valid_log_dir = os.path.join(self.config["model_path"], 'logs/', self.config["current_time"], 'pnet_valid')
-        self.train_summary_writer = tf.summary.create_file_writer(train_log_dir)
-        self.valid_summary_writer = tf.summary.create_file_writer(valid_log_dir)
+        try:
+            # tf.summary.scalar delegates to the optional tensorboard package; probe it
+            # up front (a no-op while no writer is active) and fall back to plain console
+            # logging when the package is missing.
+            tf.summary.scalar("tensorboard_probe", 0.0, step=0)
+            self.train_summary_writer = tf.summary.create_file_writer(train_log_dir)
+            self.valid_summary_writer = tf.summary.create_file_writer(valid_log_dir)
+        except Exception:
+            self.train_summary_writer = None
+            self.valid_summary_writer = None
 
     # NOTE: intentionally not decorated with @tf.function. It is only ever called
     # from inside `loss`/`train_step`, which are traced; nesting tf.function methods
@@ -192,8 +200,9 @@ class PolicyTrainer():
                         )
                     if tf.config.list_physical_devices('GPU'):
                         print(tf.config.experimental.get_memory_info('GPU:0'))
-                with self.train_summary_writer.as_default():
-                    tf.summary.scalar('loss', self.train_loss_metric.result(), step=n_step)
+                if self.train_summary_writer is not None:
+                    with self.train_summary_writer.as_default():
+                        tf.summary.scalar('loss', self.train_loss_metric.result(), step=n_step)
                 self.train_loss_metric.reset_state()
             
             # --- End of epoch: run validation once (on the fixed valid_data) ---
@@ -203,8 +212,9 @@ class PolicyTrainer():
                 (freq_valid*(n+1), -val_output["m_util"], k_end)
             )
             self.valid_loss_metric(-val_output["m_util"])
-            with self.valid_summary_writer.as_default():
-                tf.summary.scalar('loss', self.valid_loss_metric.result(), step=n_step)
+            if self.valid_summary_writer is not None:
+                with self.valid_summary_writer.as_default():
+                    tf.summary.scalar('loss', self.valid_loss_metric.result(), step=n_step)
             self.valid_loss_metric.reset_state()
 
     def save_model(self, path="policy_model"):
