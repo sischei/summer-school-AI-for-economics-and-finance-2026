@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Scaling allocation — moving the optimum</title>
+<style>
+:root{--accent:#22577d;--paper:#f3eee4;--panel:#fbf8f1;--ink:#1b1915;--muted:#6c6457;--line:#d9d0c0;--blue:#22577d;--cyan:#5e92b5;--red:#9c4a32;--green:#2f6f55;--amber:#a9762e;--sand:#efe7d7}
+@media(prefers-color-scheme:dark){:root{--accent:#5b93c9;--paper:#15130f;--panel:#1f1c16;--ink:#ece6da;--muted:#aaa094;--line:#39342c;--blue:#67a4d8;--cyan:#91bddc;--red:#d18668;--green:#79b795;--amber:#d8a656;--sand:#26221b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 system-ui,sans-serif}
+.wrap{max-width:980px;margin:auto;padding:40px 22px 70px}
+h1{font:500 clamp(2rem,6vw,3.4rem)/1.02 Georgia,serif;margin:0}h1 em{color:var(--blue)}
+.sub,.note{color:var(--muted)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;margin-top:18px}
+.honesty{border-left:4px solid var(--green)}
+.warn{border-left:4px solid var(--red)}
+.prompt{border-left:4px solid var(--blue);padding:10px 14px;margin:0}
+.ctl{margin:12px 0 4px}
+.ctl label{display:flex;justify-content:space-between;color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.03em}
+.ctl b,.mono{font-family:ui-monospace,monospace;color:var(--blue)}
+input[type=range]{width:100%;accent-color:var(--blue)}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:0 22px}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:10px;margin-top:16px}
+.stat{border-top:3px solid var(--cyan);padding:8px}
+.stat span{display:block;color:var(--muted);font-size:.68rem;text-transform:uppercase}
+.stat b{font:600 .95rem ui-monospace,monospace}
+.stat i{font-style:normal;font-size:.7rem;color:var(--muted);font-family:ui-monospace,monospace}
+.up{color:var(--green)!important}.down{color:var(--red)!important}
+.legend{display:flex;flex-wrap:wrap;gap:5px 18px;font-size:.76rem;color:var(--muted);margin-top:6px}
+.legend i{display:inline-block;width:15px;height:3px;vertical-align:3px;margin-right:5px}
+.legend i.dash{background:repeating-linear-gradient(90deg,var(--muted) 0 4px,transparent 4px 7px)}
+.legend i.dot{width:8px;height:8px;border-radius:50%;vertical-align:0}
+.take{color:var(--green);font-weight:700}
+button{border:0;background:var(--blue);color:#fff;border-radius:8px;padding:8px 13px;font-weight:700;cursor:pointer;font-size:.85rem;font-family:inherit}
+button.ghost{background:transparent;color:var(--blue);border:1px solid var(--line)}
+button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+svg{width:100%;height:auto;display:block}
+h3{font:500 1rem Georgia,serif;margin:0 0 4px}
+h2{font:500 1.35rem Georgia,serif;margin:0 0 10px}
+.eyebrow{font:600 .7rem ui-monospace,monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+/* the fit switcher — the signature control of this page */
+.fits{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:4px 0 0}
+.fit{text-align:left;background:var(--sand);border:1px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer;color:var(--ink);font-weight:400;transition:border-color .15s,box-shadow .15s}
+.fit[aria-pressed=true]{border-color:var(--blue);box-shadow:inset 3px 0 0 var(--blue)}
+.fit strong{display:block;font:600 .92rem system-ui,sans-serif;color:var(--blue);margin-bottom:3px}
+.fit span{display:block;font-size:.78rem;color:var(--muted);line-height:1.4}
+.fit code{font-family:ui-monospace,monospace;font-size:.76rem;color:var(--ink)}
+table.cmp{width:100%;border-collapse:collapse;font-size:.86rem;margin-top:10px}
+table.cmp th{text-align:right;font:600 .68rem ui-monospace,monospace;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);padding:6px 8px;border-bottom:1px solid var(--line)}
+table.cmp th:first-child{text-align:left}
+table.cmp td{text-align:right;padding:7px 8px;border-bottom:1px solid var(--line);font-family:ui-monospace,monospace}
+table.cmp td:first-child{text-align:left;font-family:system-ui,sans-serif}
+table.cmp tr.truth td{background:var(--sand);font-weight:700}
+ol.plain{margin:0;padding-left:1.15rem}
+ol.plain li{margin-bottom:9px}
+ol.plain li:last-child{margin-bottom:0}
+@media(max-width:760px){.charts,.grid3,.fits{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body><main class="wrap">
+
+<h1>Scaling: <em>where the optimum sits</em></h1>
+<p class="sub">A fixed budget <span class="mono">C = 6ND</span> forces a choice between parameters and tokens. The exponents decide it — and two published fits of the <em>same</em> experiments decide it differently.</p>
+
+<!-- ============ 1. plain words ============ -->
+<section class="panel">
+<p class="eyebrow">Start here</p>
+<h2>Chinchilla, in plain words</h2>
+<ol class="plain">
+ <li><b>You have one budget and two things to spend it on.</b> Training cost is roughly <span class="mono">C = 6ND</span> — six, times the number of parameters <span class="mono">N</span>, times the number of training tokens <span class="mono">D</span>. Fix the budget and you have exactly one dial: a bigger model on less text, or a smaller model on more text.</li>
+ <li><b>Until 2022 everyone bought parameters.</b> GPT-3 was 175 billion parameters trained on 300 billion tokens — under two tokens of text per parameter.</li>
+ <li><b>Chinchilla's claim was that the split was wrong.</b> Same budget, spent differently: 70 billion parameters on 1.4 trillion tokens — twenty tokens per parameter. The smaller model won. That is where "20 tokens per parameter" comes from.</li>
+ <li><b>Where the number comes from.</b> Fit a curve for how the loss falls as you add parameters (rate <span class="mono">α</span>) and as you add tokens (rate <span class="mono">β</span>), then minimise it subject to the budget. The winning ratio is decided by <span class="mono">α</span> against <span class="mono">β</span>. If they are equal, tokens-per-parameter is a constant — a rule of thumb. If they differ, the ratio drifts as the budget grows, and there is no rule of thumb at all.</li>
+ <li><b>Here is the part nobody mentions.</b> The constants printed in the Chinchilla paper give <span class="mono">α = 0.34</span>, <span class="mono">β = 0.28</span> — not equal. Put them through the algebra and they do not produce 20:1, and they do not reproduce the 70B model the paper is named after. A 2024 replication re-fit the same data and got <span class="mono">α ≈ β</span>, which does. <b>Both fits are below. Switch between them and watch the recommendation move.</b></li>
+</ol>
+</section>
+
+<!-- ============ 2. what the y-axis is ============ -->
+<section class="panel">
+<p class="eyebrow">The vertical axis</p>
+<h2>What "held-out loss" means</h2>
+<p style="margin:0 0 10px">Take text the model has never seen. Walk through it one token at a time. At each position the model holds a probability distribution over the whole vocabulary; look up the probability it gave to the token that actually came next, take the log, average over all positions, flip the sign:</p>
+<p class="mono" style="margin:0 0 10px;color:var(--ink)">L = −(1/T) Σ<sub>t</sub> log p<sub>θ</sub>(x<sub>t</sub> | x<sub>&lt;t</sub>)</p>
+<p style="margin:0 0 10px"><b>Average surprise per token</b>, in nats. Lower means the text was less surprising. Exponentiate it and you get <b>perplexity</b> — the effective number of equally-likely words the model is wavering between. Every loss on this page carries its perplexity next to it, because the perplexity is the one you can picture.</p>
+<p class="note" style="margin:0;font-size:.86rem">This is the log score: strictly proper, uniquely minimised at the true conditional. It is the same scoring rule you would demand of any probability you intend to act on — here applied to next-token prediction.</p>
+</section>
+
+<!-- ============ 3. the fit switcher ============ -->
+<section class="panel">
+<p class="eyebrow">Which fit</p>
+<h2>Two published estimates of the same experiments</h2>
+<div class="fits">
+  <button class="fit" id="fitHoffmann" aria-pressed="true">
+    <strong>Hoffmann et al. (2022), Approach 3</strong>
+    <span>The parametric fit as printed in the Chinchilla paper.<br>
+    <code>E 1.69 · A 406.4 · B 410.7 · α .340 · β .280</code></span></button>
+  <button class="fit" id="fitReplication" aria-pressed="false">
+    <strong>Besiroglu et al. (2024), re-fit</strong>
+    <span>Re-estimated from reconstructed data; α and β come out near-equal.<br>
+    <code>E 1.817 · A 482.0 · B 2085 · α .348 · β .366</code></span></button>
+</div>
+<p class="note" style="font-size:.83rem;margin:12px 0 0">The replication reports that the printed Approach-3 estimates are inconsistent with Hoffmann's own first two estimation methods, fit the reconstructed data poorly, and carry confidence intervals far too tight for the number of runs behind them. Part of the cause is arithmetic housekeeping: the constants in the paper body are rounded relative to the TeX source, and the rounding biases the prediction.</p>
+</section>
+
+<!-- ============ 4. the contradiction, as a table ============ -->
+<section class="panel warn">
+<p class="eyebrow">The thing to look at</p>
+<h2>Does each fit reproduce the model it came from?</h2>
+<p style="margin:0 0 4px;font-size:.9rem">Both fits, run at the budget Chinchilla itself was trained on — <span class="mono">C = 6 × 70B × 1.4T = 5.88e23</span> — against what DeepMind actually built.</p>
+<table class="cmp" id="cmpTable"></table>
+<p class="note" style="font-size:.83rem;margin:10px 0 0">A fit of an experiment that cannot recover the experiment's own headline result is a fitted response surface behaving badly — not a law of nature. That is the entire lesson, and it is checkable in four lines of algebra.</p>
+</section>
+
+<!-- ============ 5. predict first ============ -->
+<section class="panel"><p class="prompt"><b>Predict first.</b> Raise <span class="mono">α</span> and the loss falls <em>faster</em> with N — every extra parameter buys more. So: at a fixed budget, does the compute-optimal model get <b>bigger</b> or <b>smaller</b>? Commit before you touch the slider. (Most people answer this one wrong.)</p></section>
+
+<!-- ============ 6. controls ============ -->
+<section class="panel">
+ <div class="grid3">
+  <div class="ctl"><label>parameter exponent &alpha; <b id="aOut"></b></label>
+    <input id="alpha" type="range" min="0.15" max="0.60" step="0.005" value="0.34"></div>
+  <div class="ctl"><label>data exponent &beta; <b id="bOut"></b></label>
+    <input id="beta" type="range" min="0.15" max="0.60" step="0.005" value="0.28"></div>
+  <div class="ctl"><label>budget log<sub>10</sub> C <b id="cOut"></b></label>
+    <input id="logC" type="range" min="20" max="26" step="0.05" value="23"></div>
+ </div>
+ <p style="margin:.6rem 0 0"><button id="lock">Freeze this as the baseline</button>
+   <button id="models" class="ghost" aria-pressed="true">Hide the real models</button>
+   <span id="baseNote" class="note" style="font-size:.8rem"></span></p>
+
+ <div class="stats">
+  <div class="stat"><span>optimal N*</span><b id="Nstar"></b><i id="Ndelta"></i></div>
+  <div class="stat"><span>optimal D*</span><b id="Dstar"></b><i id="Ddelta"></i></div>
+  <div class="stat"><span>tokens per parameter</span><b id="ratio"></b><i id="rdelta"></i></div>
+  <div class="stat"><span>elasticity of N* in C</span><b id="elasN"></b><i>&beta;/(&alpha;+&beta;)</i></div>
+  <div class="stat"><span>elasticity of D* in C</span><b id="elasD"></b><i>&alpha;/(&alpha;+&beta;)</i></div>
+  <div class="stat"><span>loss at the optimum</span><b id="Lstar"></b><i id="Ldelta"></i></div>
+  <div class="stat"><span>perplexity there</span><b id="Pstar"></b><i>e<sup>L*</sup></i></div>
+  <div class="stat"><span>irreducible floor</span><b id="Efloor"></b><i id="Eppl"></i></div>
+ </div>
+</section>
+
+<!-- ============ 7. charts ============ -->
+<section class="panel">
+ <div class="charts">
+  <div>
+   <h3>The isoFLOP slice</h3>
+   <svg id="iso" viewBox="0 0 460 330" role="img" aria-label="Loss against parameters at fixed compute, with the minimum marked"></svg>
+   <div class="legend">
+     <span><i style="background:var(--blue)"></i>current</span>
+     <span><i class="dash"></i>baseline</span>
+     <span>&#9679; the minimum &mdash; watch it slide</span>
+   </div>
+   <p class="note" style="font-size:.78rem;margin-top:8px"><b>No real models on this panel.</b> The axis is nats <em>per token</em>, so it depends on the tokenizer, and it is measured on this fit's own held-out mixture. BERT's masked-token loss is not even the same objective. Losses are not comparable across models; counts are.</p>
+  </div>
+  <div>
+   <h3>The (N, D) plane</h3>
+   <svg id="plane" viewBox="0 0 460 330" role="img" aria-label="Budget line, loss contours, the optimal ray and real models in the N-D plane"></svg>
+   <div class="legend">
+     <span><i style="background:var(--muted)"></i>budget 6ND = C</span>
+     <span><i style="background:var(--cyan)"></i>loss contours</span>
+     <span><i style="background:var(--blue)"></i>optimal ray, slope &alpha;/&beta;</span>
+     <span><i class="dash" style="background:var(--green)"></i>20 tokens per parameter</span>
+     <span><i class="dot" style="background:var(--ink)"></i>reported (N, D)</span>
+     <span><i class="dot" style="background:var(--amber)"></i>token count not reported</span>
+   </div>
+   <p class="note" style="font-size:.78rem;margin-top:8px"><b>GPT-4 and GPT-5 are missing on purpose.</b> Neither has a published parameter count or token count. A point drawn for them would be a rumour with axes.</p>
+  </div>
+ </div>
+</section>
+
+<!-- ============ 8. debrief ============ -->
+<section class="panel"><p class="prompt"><span class="take">Debrief — and the answer is <b>smaller</b>.</span>
+The intuition that fails is reading &alpha; as <em>how much</em> parameters help. It is not: &alpha; is the rate at which their help <b>decays</b>. A steeper curve reaches its flat part sooner, so the marginal FLOP is better spent on tokens and N* falls.
+From the closed form <span class="mono">ln N* = [ln(αA/βB) + β·ln(C/6)]/(α+β)</span>,
+<span class="mono">∂ln N*/∂α = (1/α − ln N*)/(α+β)</span>, which is negative for any <span class="mono">N* &gt; e<sup>1/α</sup></span> — about 19 parameters at the Chinchilla α. So for every model anyone has ever trained, raising α shrinks the optimum.
+The elasticity <span class="mono">β/(α+β)</span> falls too, so <em>both</em> move down; and in the right-hand panel the same fact appears as the optimal ray <b>tilting</b> — its slope is <span class="mono">α/β</span>, the 45&deg; line only when α = β.
+Push the sliders far from the fitted region and the ratios become absurd. That is the honest reading of a regression evaluated outside its support, not a discovery.</p></section>
+
+<section class="panel honesty"><b>Epistemic status:</b> exact arithmetic on the declared parametric form <span class="mono">L = E + A/N<sup>α</sup> + B/D<sup>β</sup></span>, under two published sets of constants. Each optimum is computed in closed form and cross-checked against an independent numerical minimum on every redraw; a <span class="mono">⚠</span> next to the loss means the two disagreed. Nothing here is trained. This is the response surface, not a measurement of one. The two fits carry different irreducible floors <span class="mono">E</span>, so loss <em>levels</em> are not comparable between them — the allocation they recommend is.</section>
+
+<p class="note" style="margin-top:22px">Static page. No network requests, no external fonts or libraries — it runs offline from a USB drive.</p>
+
+</main><script>
+'use strict';
+const $=x=>document.getElementById(x);
+
+/* ---- the two published fits ------------------------------------------ */
+const PRESETS={
+  hoffmann:   {A:406.4, B:410.7,  E:1.69,  alpha:0.34,  beta:0.28,
+               short:'Hoffmann et al. (2022), as printed'},
+  replication:{A:482.0, B:2085,   E:1.817, alpha:0.348, beta:0.366,
+               short:'Besiroglu et al. (2024) re-fit'}
+};
+
+/* ---- real models: (N, D) only ----------------------------------------
+   VERIFY EVERY ROW AGAINST THE SOURCE BEFORE TEACHING FROM IT.
+   'reported'  — both counts stated in the paper.
+   'approx'    — parameter count stated, token count inferred or absent.
+   Deliberately absent: GPT-4, GPT-5 — no published N or D.
+   To add your own: copy a row. Note the D axis floor is 1e9; a DAPT
+   corpus below that will fall off the bottom, so lower D0 in drawPlane. */
+const MODELS=[
+ {n:'BERT-base',    N:1.10e8,  D:3.30e9,  c:'reported', s:'Devlin et al. 2019 — 3.3B words'},
+ {n:'BERT-large',   N:3.40e8,  D:3.30e9,  c:'reported', s:'Devlin et al. 2019 — same corpus'},
+ {n:'GPT-2',        N:1.50e9,  D:1.00e10, c:'approx',   s:'Radford et al. 2019 — 40GB WebText; token count not reported'},
+ {n:'GPT-3',        N:1.75e11, D:3.00e11, c:'reported', s:'Brown et al. 2020 — 1.7 tokens/param'},
+ {n:'Gopher',       N:2.80e11, D:3.00e11, c:'reported', s:'Rae et al. 2021 — 1.1 tokens/param'},
+ {n:'Chinchilla',   N:7.00e10, D:1.40e12, c:'reported', s:'Hoffmann et al. 2022 — 20 tokens/param', star:true},
+ {n:'BloombergGPT', N:5.00e10, D:7.08e11, c:'reported', s:'Wu et al. 2023 — 363B financial + 345B general'},
+ {n:'Llama 3 70B',  N:7.00e10, D:1.50e13, c:'reported', s:'same size as Chinchilla, ~10x the tokens'},
+ {n:'Llama 3 405B', N:4.05e11, D:1.50e13, c:'reported', s:'~37 tokens/param — past optimal, on purpose'}
+];
+
+let active='hoffmann', baseline=null, showModels=true;
+
+/* ---- the model -------------------------------------------------------- */
+const loss=(N,D,P)=>P.E+P.A*Math.pow(N,-P.alpha)+P.B*Math.pow(D,-P.beta);
+
+/* closed form: N* = [ (αA)/(βB) * (C/6)^β ]^(1/(α+β)) */
+function optimum(P,C){
+  const a=P.alpha,b=P.beta;
+  const N=Math.pow((a*P.A)/(b*P.B)*Math.pow(C/6,b),1/(a+b));
+  const D=C/(6*N);
+  return {N,D,L:loss(N,D,P)};
+}
+/* independent numerical minimum, so the closed form is checked every redraw */
+function numericOptimum(P,C){
+  let lo=Math.log(1e6), hi=Math.log(1e14);
+  const f=lN=>{const N=Math.exp(lN);return loss(N,C/(6*N),P)};
+  for(let i=0;i<160;i++){
+    const m1=lo+(hi-lo)/3, m2=hi-(hi-lo)/3;
+    if(f(m1)<f(m2)) hi=m2; else lo=m1;
+  }
+  return Math.exp((lo+hi)/2);
+}
+/* live parameter set: constants from the active fit, exponents from the sliders */
+function cur(){
+  const P=PRESETS[active];
+  return {A:P.A,B:P.B,E:P.E,alpha:+$('alpha').value,beta:+$('beta').value};
+}
+
+/* ---- formatting ------------------------------------------------------- */
+function human(x){
+  if(!isFinite(x))return'—';
+  if(x>=1e12)return (x/1e12).toFixed(x<1e13?2:1)+'T';
+  if(x>=1e9) return (x/1e9 ).toFixed(x<1e10?2:1)+'B';
+  if(x>=1e6) return (x/1e6 ).toFixed(x<1e7 ?2:1)+'M';
+  return x.toPrecision(3);
+}
+const ppl=L=>Math.exp(L);
+function delta(now,then,invert){
+  if(then==null)return'';
+  const r=now/then;
+  if(Math.abs(r-1)<0.005)return'unchanged';
+  const cls=(r>1)!==!!invert?'up':'down';
+  return '<span class="'+cls+'">×'+r.toFixed(2)+'</span>';
+}
+
+/* ---- drawing helpers --------------------------------------------------- */
+function axes(W,H,p,xt,yt,xlab,ylab){
+  let s='';
+  for(const t of xt) s+='<line x1="'+t.x+'" x2="'+t.x+'" y1="'+p.t+'" y2="'+(H-p.b)+'" stroke="var(--line)"/>'
+    +'<text x="'+t.x+'" y="'+(H-p.b+14)+'" text-anchor="middle" fill="var(--muted)" font-size="10">'+t.l+'</text>';
+  for(const t of yt) s+='<line x1="'+p.l+'" x2="'+(W-p.r)+'" y1="'+t.y+'" y2="'+t.y+'" stroke="var(--line)"/>'
+    +'<text x="'+(p.l-6)+'" y="'+(t.y+3.5)+'" text-anchor="end" fill="var(--muted)" font-size="10">'+t.l+'</text>';
+  s+='<text x="'+(p.l+(W-p.l-p.r)/2)+'" y="'+(H-3)+'" text-anchor="middle" fill="var(--muted)" font-size="11">'+xlab+'</text>';
+  s+='<text transform="translate(11 '+(p.t+(H-p.t-p.b)/2)+') rotate(-90)" text-anchor="middle" fill="var(--muted)" font-size="11">'+ylab+'</text>';
+  return s;
+}
+const esc=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+/* ---- panel 1: the isoFLOP slice ---------------------------------------- */
+function drawIso(P,C){
+  const W=460,H=330,p={l:52,r:14,t:14,b:34};
+  const N0=1e7,N1=1e13;
+  const xm=N=>p.l+(Math.log10(N)-Math.log10(N0))/(Math.log10(N1)-Math.log10(N0))*(W-p.l-p.r);
+  const opt=optimum(P,C);
+  const lo=Math.min(P.E, baseline?baseline.E:P.E);
+  const hi=Math.max(opt.L*1.9, lo+1.6);
+  const ym=L=>H-p.b-(Math.min(L,hi)-lo)/(hi-lo)*(H-p.t-p.b);
+
+  const xt=[];for(let e=7;e<=13;e+=2)xt.push({x:xm(Math.pow(10,e)),l:'1e'+e});
+  const yt=[];for(let k=0;k<=4;k++){const L=lo+(hi-lo)*k/4;yt.push({y:ym(L),l:L.toFixed(2)})}
+  let s=axes(W,H,p,xt,yt,'parameters N (at fixed C)','held-out loss (nats/token)');
+
+  const curve=(Q,col,wd,dash)=>{
+    const pts=[];
+    for(let i=0;i<=240;i++){
+      const N=Math.pow(10,Math.log10(N0)+(Math.log10(N1)-Math.log10(N0))*i/240);
+      const L=loss(N,C/(6*N),Q);
+      if(L<=hi) pts.push(xm(N)+','+ym(L));
+    }
+    return '<polyline points="'+pts.join(' ')+'" fill="none" stroke="'+col+'" stroke-width="'+wd+'"'
+      +(dash?' stroke-dasharray="6 5"':'')+' stroke-linejoin="round"/>';
+  };
+  if(baseline) s+=curve(baseline,'var(--muted)',2,true);
+  s+=curve(P,'var(--blue)',3,false);
+
+  if(baseline){
+    const bo=optimum(baseline,C);
+    s+='<circle cx="'+xm(bo.N)+'" cy="'+ym(bo.L)+'" r="4" fill="none" stroke="var(--muted)" stroke-width="2"/>';
+    if(Math.abs(xm(opt.N)-xm(bo.N))>6)
+      s+='<line x1="'+xm(bo.N)+'" y1="'+(ym(bo.L)-13)+'" x2="'+(xm(opt.N)-Math.sign(xm(opt.N)-xm(bo.N))*7)+'" y2="'+(ym(opt.L)-13)
+        +'" stroke="var(--green)" stroke-width="2" marker-end="url(#ar)"/>';
+  }
+  s+='<circle cx="'+xm(opt.N)+'" cy="'+ym(opt.L)+'" r="5.5" fill="var(--blue)"><title>optimum: '
+    +human(opt.N)+' parameters, loss '+opt.L.toFixed(3)+' (perplexity '+ppl(opt.L).toFixed(1)+')</title></circle>';
+  s+='<line x1="'+xm(opt.N)+'" y1="'+ym(opt.L)+'" x2="'+xm(opt.N)+'" y2="'+(H-p.b)+'" stroke="var(--blue)" stroke-dasharray="3 3"/>';
+  s+='<defs><marker id="ar" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">'
+    +'<path d="M0,0 L7,3.5 L0,7 z" fill="var(--green)"/></marker></defs>';
+  $('iso').innerHTML=s;
+}
+
+/* ---- panel 2: the (N, D) plane ----------------------------------------- */
+function drawPlane(P,C){
+  const W=460,H=330,p={l:52,r:14,t:14,b:34};
+  const N0=5e7,N1=1e12,D0=1e9,D1=1e14;
+  const xm=N=>p.l+(Math.log10(N)-Math.log10(N0))/(Math.log10(N1)-Math.log10(N0))*(W-p.l-p.r);
+  const ym=D=>H-p.b-(Math.log10(D)-Math.log10(D0))/(Math.log10(D1)-Math.log10(D0))*(H-p.t-p.b);
+  const on=(N,D)=>N>N0&&N<N1&&D>D0&&D<D1;
+  const xt=[];for(let e=8;e<=12;e+=1)xt.push({x:xm(Math.pow(10,e)),l:'1e'+e});
+  const yt=[];for(let e=9;e<=14;e+=1)yt.push({y:ym(Math.pow(10,e)),l:'1e'+e});
+  let s=axes(W,H,p,xt,yt,'parameters N','tokens D');
+
+  const opt=optimum(P,C);
+
+  /* loss contours: solve L(N,D) = L0 for D */
+  for(const mult of [0.94,1.0,1.10,1.25]){
+    const L0=P.E+(opt.L-P.E)/mult;
+    const pts=[];
+    for(let i=0;i<=200;i++){
+      const N=Math.pow(10,Math.log10(N0)+(Math.log10(N1)-Math.log10(N0))*i/200);
+      const rem=L0-P.E-P.A*Math.pow(N,-P.alpha);
+      if(rem<=0) continue;
+      const D=Math.pow(P.B/rem,1/P.beta);
+      if(D>D0&&D<D1) pts.push(xm(N)+','+ym(D));
+    }
+    if(pts.length>1)
+      s+='<polyline points="'+pts.join(' ')+'" fill="none" stroke="var(--cyan)" stroke-width="'
+        +(mult===1?2.2:1.2)+'" opacity="'+(mult===1?0.95:0.5)+'"/>';
+  }
+
+  /* 20 tokens per parameter — the rule of thumb, as a reference line */
+  const ref=[];
+  for(let i=0;i<=60;i++){
+    const N=Math.pow(10,Math.log10(N0)+(Math.log10(N1)-Math.log10(N0))*i/60);
+    if(on(N,20*N)) ref.push(xm(N)+','+ym(20*N));
+  }
+  if(ref.length>1) s+='<polyline points="'+ref.join(' ')+'" fill="none" stroke="var(--green)" stroke-width="1.6" stroke-dasharray="5 4" opacity="0.85"/>';
+
+  /* budget line 6ND = C */
+  const bl=[];
+  for(let i=0;i<=100;i++){
+    const N=Math.pow(10,Math.log10(N0)+(Math.log10(N1)-Math.log10(N0))*i/100);
+    const D=C/(6*N);
+    if(D>D0&&D<D1) bl.push(xm(N)+','+ym(D));
+  }
+  s+='<polyline points="'+bl.join(' ')+'" fill="none" stroke="var(--muted)" stroke-width="2.4"/>';
+
+  /* the optimal ray: (N*(C'), D*(C')) as C' sweeps — slope α/β in log-log */
+  const ray=[];
+  for(let lc=19;lc<=27;lc+=0.1){
+    const o=optimum(P,Math.pow(10,lc));
+    if(on(o.N,o.D)) ray.push(xm(o.N)+','+ym(o.D));
+  }
+  s+='<polyline points="'+ray.join(' ')+'" fill="none" stroke="var(--blue)" stroke-width="2" stroke-dasharray="7 4"/>';
+
+  /* the real models — counts only, no loss claim */
+  if(showModels){
+    MODELS.forEach((m,i)=>{
+      if(!on(m.N,m.D)) return;
+      const x=xm(m.N), y=ym(m.D);
+      const col=m.c==='approx'?'var(--amber)':'var(--ink)';
+      const up=i%2===0;
+      s+='<circle cx="'+x+'" cy="'+y+'" r="'+(m.star?5:3.6)+'" fill="'+col+'"'
+        +(m.star?' stroke="var(--green)" stroke-width="2"':'')+'>'
+        +'<title>'+esc(m.n+' — '+human(m.N)+' params, '+human(m.D)+' tokens, '
+        +(m.D/m.N).toFixed(1)+' tokens/param. '+m.s)+'</title></circle>';
+      s+='<text x="'+x+'" y="'+(y+(up?-8:14))+'" text-anchor="middle" font-size="8.5" '
+        +'fill="'+col+'" font-family="ui-monospace,monospace">'+esc(m.n)+'</text>';
+    });
+  }
+
+  if(baseline){
+    const bo=optimum(baseline,C);
+    s+='<circle cx="'+xm(bo.N)+'" cy="'+ym(bo.D)+'" r="4" fill="none" stroke="var(--muted)" stroke-width="2"/>';
+  }
+  s+='<circle cx="'+xm(opt.N)+'" cy="'+ym(opt.D)+'" r="5.5" fill="var(--blue)"><title>optimum at this budget: '
+    +human(opt.N)+' params, '+human(opt.D)+' tokens, '+(opt.D/opt.N).toFixed(1)+' tokens/param</title></circle>';
+  $('plane').innerHTML=s;
+}
+
+/* ---- the comparison table ---------------------------------------------- */
+const CH_N=7.0e10, CH_D=1.4e12, CH_C=6*CH_N*CH_D;   /* the model DeepMind built */
+function drawCompare(){
+  let r='<tr><th>Fit</th><th>N*</th><th>D*</th><th>tokens / param</th><th>vs. 20:1</th></tr>';
+  for(const k of ['hoffmann','replication']){
+    const P=PRESETS[k], o=optimum(P,CH_C), ratio=o.D/o.N;
+    const off=ratio/20;
+    const cls=Math.abs(off-1)<0.25?'up':'down';
+    r+='<tr'+(k===active?' style="outline:2px solid var(--blue);outline-offset:-2px"':'')+'>'
+      +'<td>'+P.short+'</td><td>'+human(o.N)+'</td><td>'+human(o.D)+'</td>'
+      +'<td>'+ratio.toFixed(1)+' : 1</td>'
+      +'<td class="'+cls+'">×'+off.toFixed(2)+'</td></tr>';
+  }
+  r+='<tr class="truth"><td>Chinchilla, the model actually trained</td><td>'+human(CH_N)+'</td><td>'
+    +human(CH_D)+'</td><td>20.0 : 1</td><td>×1.00</td></tr>';
+  $('cmpTable').innerHTML=r;
+}
+
+/* ---- update ------------------------------------------------------------ */
+function update(){
+  const P=cur(), C=Math.pow(10,+$('logC').value);
+  $('aOut').textContent=P.alpha.toFixed(3);
+  $('bOut').textContent=P.beta.toFixed(3);
+  $('cOut').textContent=(+$('logC').value).toFixed(2);
+
+  const o=optimum(P,C);
+  const agree=Math.abs(Math.log(o.N/numericOptimum(P,C)))<0.02;
+
+  $('Nstar').textContent=human(o.N);
+  $('Dstar').textContent=human(o.D);
+  $('ratio').textContent=(o.D/o.N).toFixed(1)+' : 1';
+  $('elasN').textContent=(P.beta/(P.alpha+P.beta)).toFixed(3);
+  $('elasD').textContent=(P.alpha/(P.alpha+P.beta)).toFixed(3);
+  $('Lstar').textContent=o.L.toFixed(4)+(agree?'':' ⚠');
+  $('Pstar').textContent=ppl(o.L).toFixed(2);
+  $('Efloor').textContent=P.E.toFixed(3);
+  $('Eppl').textContent='perplexity '+ppl(P.E).toFixed(2);
+
+  if(baseline){
+    const bo=optimum(baseline,C);
+    $('Ndelta').innerHTML=delta(o.N,bo.N);
+    $('Ddelta').innerHTML=delta(o.D,bo.D);
+    $('rdelta').innerHTML=delta(o.D/o.N,bo.D/bo.N);
+    $('Ldelta').innerHTML=delta(o.L,bo.L,true);
+  }
+  drawIso(P,C); drawPlane(P,C); drawCompare();
+}
+
+/* ---- wiring ------------------------------------------------------------ */
+['alpha','beta','logC'].forEach(id=>$(id).addEventListener('input',update));
+
+function setFit(k){
+  active=k;
+  const P=PRESETS[k];
+  $('alpha').value=P.alpha; $('beta').value=P.beta;
+  $('fitHoffmann').setAttribute('aria-pressed', k==='hoffmann');
+  $('fitReplication').setAttribute('aria-pressed', k==='replication');
+  update();
+}
+$('fitHoffmann').addEventListener('click',()=>setFit('hoffmann'));
+$('fitReplication').addEventListener('click',()=>setFit('replication'));
+
+$('lock').addEventListener('click',()=>{
+  baseline=cur();
+  $('baseNote').textContent='baseline frozen: '+PRESETS[active].short
+    +', α='+baseline.alpha.toFixed(3)+', β='+baseline.beta.toFixed(3);
+  update();
+});
+$('models').addEventListener('click',()=>{
+  showModels=!showModels;
+  $('models').textContent=showModels?'Hide the real models':'Show the real models';
+  $('models').setAttribute('aria-pressed',showModels);
+  update();
+});
+
+baseline=Object.assign({},PRESETS.hoffmann);
+$('baseNote').textContent='baseline: Hoffmann et al. as printed, α=0.340, β=0.280';
+setFit('hoffmann');
+</script></body></html>

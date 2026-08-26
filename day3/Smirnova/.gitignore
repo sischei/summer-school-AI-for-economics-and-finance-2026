@@ -1,0 +1,6 @@
+# Only the two PDFs from slides/ are tracked; everything else there is lecturer-only.
+refs/
+TOMORROW.md
+slides/*
+!slides/lecture1.pdf
+!slides/lecture2.pdf

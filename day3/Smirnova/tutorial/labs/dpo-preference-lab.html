@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DPO — the cancellation, and what it does not remove</title>
+<style>
+:root{--accent:#22577d;--paper:#f3eee4;--panel:#fbf8f1;--ink:#1b1915;--muted:#6c6457;--line:#d9d0c0;--blue:#22577d;--cyan:#5e92b5;--red:#9c4a32;--green:#2f6f55}
+@media(prefers-color-scheme:dark){:root{--accent:#5b93c9;--paper:#15130f;--panel:#1f1c16;--ink:#ece6da;--muted:#aaa094;--line:#39342c;--blue:#67a4d8;--cyan:#91bddc;--red:#d18668;--green:#79b795}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 system-ui,sans-serif}
+.wrap{max-width:980px;margin:auto;padding:40px 22px 70px}
+h1{font:500 clamp(2rem,6vw,3.4rem)/1.02 Georgia,serif;margin:0}h1 em{color:var(--blue)}
+.sub,.note{color:var(--muted)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;margin-top:18px}
+.honesty{border-left:4px solid var(--green)}
+.prompt{border-left:4px solid var(--blue);padding:10px 14px;margin:0}
+.ctl{margin:12px 0 4px}
+.ctl label{display:flex;justify-content:space-between;color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.03em}
+.ctl b,.mono{font-family:ui-monospace,monospace;color:var(--blue)}
+input[type=range]{width:100%;accent-color:var(--blue)}
+input[type=checkbox]{accent-color:var(--blue);width:16px;height:16px}
+label.chk{display:inline-flex;align-items:center;gap:7px;color:var(--muted);font-size:.85rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font:.82rem/1.45 ui-monospace,monospace;min-width:520px}
+th,td{padding:6px 9px;text-align:right;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+th{font:600 .68rem/1.3 ui-monospace,monospace;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);white-space:nowrap}
+td.l,th.l{text-align:left}
+tr.win td{color:var(--green);font-weight:700}
+.const{background:color-mix(in srgb,var(--cyan) 16%,transparent)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:16px}
+.stat{border-top:3px solid var(--cyan);padding:8px}
+.stat span{display:block;color:var(--muted);font-size:.68rem;text-transform:uppercase}
+.stat b{font:600 .95rem ui-monospace,monospace}
+.take{color:var(--green);font-weight:700}
+.flag{color:var(--red);font-weight:700}
+svg{width:100%;height:auto;display:block}
+h3{font:500 1.05rem Georgia,serif;margin:0 0 6px}
+.legend{display:flex;flex-wrap:wrap;gap:5px 18px;font-size:.76rem;color:var(--muted);margin-top:6px}
+.legend i{display:inline-block;width:15px;height:3px;vertical-align:3px;margin-right:5px}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+</style></head><body><main class="wrap">
+
+<h1>DPO: <em>an exact cancellation</em></h1>
+<p class="sub">The partition function really does vanish — you can watch it. What survives is every modelling assumption it was standing next to.</p>
+
+<section class="panel honesty"><b>Epistemic status:</b> exact arithmetic on a six-response toy prompt. The reference policy, the latent rewards and the lengths are stipulated; everything derived from them — the Gibbs tilt, the implicit reward, the Bradley–Terry probabilities, the KL — is computed exactly, not fitted. No model is trained here.</section>
+
+<section class="panel"><p class="prompt"><b>Predict first.</b> The optimal policy is <span class="mono">π*(y) ∝ π<sub>ref</sub>(y)·e<sup>r(y)/β</sup></span>, and DPO's implicit reward is <span class="mono">r̂ = β·log(π*/π<sub>ref</sub>)</span>. Is <span class="mono">r̂</span> equal to <span class="mono">r</span>? If not, what does the difference depend on — the response, the prompt, or β? Commit before you look at the table.</p></section>
+
+<section class="panel">
+ <div class="grid2">
+  <div class="ctl"><label>KL weight &beta; <b id="betaOut"></b></label>
+    <input id="beta" type="range" min="0.05" max="2.00" step="0.01" value="0.30"></div>
+  <div class="ctl"><label>per-token drift &delta; (the length exploit) <b id="dOut"></b></label>
+    <input id="drift" type="range" min="0" max="0.30" step="0.005" value="0"></div>
+ </div>
+ <p style="margin:.5rem 0 0"><label class="chk"><input id="lennorm" type="checkbox"> length-normalise the implicit reward (divide by tokens)</label></p>
+
+ <div class="tw" style="margin-top:14px">
+ <table id="tbl">
+  <thead><tr>
+    <th class="l">response</th><th>tokens</th><th>&pi;<sub>ref</sub></th><th>true r</th>
+    <th>&pi;*</th><th>r&#770; = &beta;log(&pi;*/&pi;<sub>ref</sub>)</th><th>r&#770; &minus; r</th>
+  </tr></thead>
+  <tbody id="rows"></tbody>
+ </table>
+ </div>
+
+ <div class="stats">
+  <div class="stat"><span>Z(x)</span><b id="Z"></b></div>
+  <div class="stat"><span>&minus;&beta; log Z(x)</span><b id="blz"></b></div>
+  <div class="stat"><span>max |(r&#770;&minus;r) &minus; (&minus;&beta;logZ)|</span><b id="resid"></b></div>
+  <div class="stat"><span>KL(&pi;* &#8214; &pi;<sub>ref</sub>)</span><b id="kl"></b></div>
+  <div class="stat"><span>equivalent best-of-<em>n</em></span><b id="bon"></b></div>
+  <div class="stat"><span>E[tokens] under &pi;*</span><b id="elen"></b></div>
+ </div>
+</section>
+
+<section class="panel">
+ <div class="grid2">
+  <div>
+   <h3>Pairwise preferences: r against r&#770;</h3>
+   <div class="tw"><table id="pairs">
+     <thead><tr><th class="l">pair</th><th>&sigma;(r<sub>w</sub>&minus;r<sub>l</sub>)</th><th>&sigma;(r&#770;<sub>w</sub>&minus;r&#770;<sub>l</sub>)</th><th>difference</th></tr></thead>
+     <tbody id="prows"></tbody>
+   </table></div>
+   <p class="note" style="font-size:.8rem;margin-top:8px">Bradley–Terry needs only differences at a fixed prompt, and the constant is shared. That is the whole trick.</p>
+  </div>
+  <div>
+   <h3>What &beta; buys, in a common currency</h3>
+   <svg id="klplot" viewBox="0 0 460 300" role="img" aria-label="KL from the reference against beta, with best-of-n equivalents"></svg>
+   <div class="legend">
+     <span><i style="background:var(--blue)"></i>KL(&pi;*&#8214;&pi;<sub>ref</sub>) at this &beta;</span>
+     <span><i style="background:var(--cyan)"></i>best-of-<em>n</em>: log n &minus; (n&minus;1)/n</span>
+   </div>
+  </div>
+ </div>
+</section>
+
+<section class="panel"><p class="prompt"><span class="take">Debrief — part one.</span> <span class="mono">r̂ − r</span> is the same number for every response: it is <span class="mono">−β log Z(x)</span>, a function of the <em>prompt</em> alone. Both responses in a comparison share the prompt, so it cancels in the difference and the two preference columns agree to machine precision. The intractable normaliser never has to be computed.</p></section>
+
+<section class="panel"><p class="prompt"><span class="flag">Debrief — part two: what did not cancel.</span> Now raise <span class="mono">δ</span>. The implicit reward is a <em>sum of per-token</em> log-ratios, so a policy that adds even a tiny constant to every token's log-ratio gains <span class="mono">β·δ·ℓ</span> — proportional to length. Nothing in the algebra forbids it, and the objective rewards it: the winner flips to a longer response and <span class="mono">E[tokens]</span> climbs, with the true rewards untouched. Tick length-normalisation and the ranking comes back. The cancellation removed a <em>computation</em>; the modelling commitments — Bradley–Terry, a single latent reward, a fixed correct <span class="mono">π<sub>ref</sub></span>, and offline pairs that cover the deployed distribution — are all still load-bearing.</p></section>
+
+<p class="note" style="margin-top:22px">Static page. No network requests, no external fonts or libraries — it runs offline from a USB drive.</p>
+
+</main><script>
+'use strict';
+const $=x=>document.getElementById(x);
+const sig=x=>1/(1+Math.exp(-x));
+
+/* six candidate replies to one prompt: reference mass, latent reward, length */
+const R=[
+ {name:'terse, correct',        pref:0.30, r: 1.40, len: 18},
+ {name:'correct, hedged',       pref:0.22, r: 1.10, len: 46},
+ {name:'correct, very verbose', pref:0.10, r: 1.00, len:140},
+ {name:'plausible, wrong',      pref:0.20, r:-0.60, len: 40},
+ {name:'refuses',               pref:0.13, r: 0.20, len: 12},
+ {name:'off-topic',             pref:0.05, r:-1.50, len: 25}
+];
+
+function compute(){
+  const beta=+$('beta').value, drift=+$('drift').value, ln=$('lennorm').checked;
+
+  /* the optimiser can add a constant delta to every token's log-ratio; in reward
+     units that is beta*delta*len -- free under the objective, invisible to r */
+  const rEff=R.map(o=>o.r+beta*drift*o.len);
+
+  const w=R.map((o,i)=>o.pref*Math.exp(rEff[i]/beta));
+  const Z=w.reduce((a,b)=>a+b,0);
+  const pi=w.map(v=>v/Z);
+  const rhatRaw=R.map((o,i)=>beta*Math.log(pi[i]/o.pref));
+  const rhat=ln?rhatRaw.map((v,i)=>v/(R[i].len/40)):rhatRaw;   /* 40 tokens = the unit */
+  const konst=-beta*Math.log(Z);
+  return {beta,drift,ln,rEff,Z,pi,rhatRaw,rhat,konst};
+}
+
+function fmt(x,d){return (x>=0?' ':'')+x.toFixed(d===undefined?3:d)}
+
+function update(){
+  const s=compute();
+  $('betaOut').textContent=s.beta.toFixed(2);
+  $('dOut').textContent=s.drift.toFixed(3);
+
+  /* which response the implicit reward now prefers */
+  let best=0; for(let i=1;i<R.length;i++) if(s.rhat[i]>s.rhat[best]) best=i;
+
+  let rows='', maxres=0;
+  R.forEach((o,i)=>{
+    const diff=s.rhatRaw[i]-s.rEff[i];
+    maxres=Math.max(maxres,Math.abs(diff-s.konst));
+    rows+='<tr'+(i===best?' class="win"':'')+'>'
+      +'<td class="l">'+o.name+(i===best?' &larr;':'')+'</td>'
+      +'<td>'+o.len+'</td><td>'+o.pref.toFixed(2)+'</td><td>'+fmt(o.r,2)+'</td>'
+      +'<td>'+s.pi[i].toFixed(4)+'</td><td>'+fmt(s.rhat[i],3)+'</td>'
+      +'<td class="const">'+fmt(diff,4)+'</td></tr>';
+  });
+  $('rows').innerHTML=rows;
+
+  $('Z').textContent=s.Z.toFixed(4);
+  $('blz').textContent=fmt(s.konst,4);
+  $('resid').textContent=maxres.toExponential(1);
+
+  const kl=s.pi.reduce((a,p,i)=>a+(p>0?p*Math.log(p/R[i].pref):0),0);
+  $('kl').textContent=kl.toFixed(4)+' nats';
+  /* invert log n - (n-1)/n = kl */
+  let n=1; for(let t=1;t<=4096;t++){ if(Math.log(t)-(t-1)/t<=kl) n=t; }
+  $('bon').textContent='n ≈ '+n;
+  $('elen').textContent=s.pi.reduce((a,p,i)=>a+p*R[i].len,0).toFixed(1)+' tok';
+
+  /* pairwise check: true reward vs implicit reward, on the raw (unnormalised) scale */
+  const pairs=[[0,3],[0,5],[1,3],[2,4],[1,2]];
+  let pr='', worst=0;
+  for(const [a,b] of pairs){
+    const t=sig(R[a].r-R[b].r);
+    const h=sig(s.rhatRaw[a]-s.rhatRaw[b]);
+    worst=Math.max(worst,Math.abs(t-h));
+    pr+='<tr><td class="l">'+R[a].name.split(',')[0]+' &#8827; '+R[b].name.split(',')[0]+'</td>'
+      +'<td>'+t.toFixed(6)+'</td><td>'+h.toFixed(6)+'</td><td>'+(t-h).toExponential(1)+'</td></tr>';
+  }
+  $('prows').innerHTML=pr;
+
+  drawKL(kl,s.beta);
+}
+
+function drawKL(klNow,betaNow){
+  const W=460,H=300,p={l:48,r:14,t:14,b:34};
+  const b0=0.05,b1=2.0;
+  const xm=b=>p.l+(b-b0)/(b1-b0)*(W-p.l-p.r);
+  /* KL as a function of beta, with drift and normalisation held at current values */
+  const save=$('beta').value; const vals=[];
+  for(let i=0;i<=140;i++){
+    const b=b0+(b1-b0)*i/140;
+    $('beta').value=b; const s=compute();
+    vals.push([b,s.pi.reduce((a,q,j)=>a+(q>0?q*Math.log(q/R[j].pref):0),0)]);
+  }
+  $('beta').value=save;
+  const hi=Math.max(0.6,...vals.map(v=>v[1]))*1.08;
+  const ym=k=>H-p.b-Math.min(k,hi)/hi*(H-p.t-p.b);
+
+  let s='';
+  for(let i=0;i<=4;i++){const b=b0+(b1-b0)*i/4;
+    s+='<line x1="'+xm(b)+'" x2="'+xm(b)+'" y1="'+p.t+'" y2="'+(H-p.b)+'" stroke="var(--line)"/>'
+     +'<text x="'+xm(b)+'" y="'+(H-p.b+14)+'" text-anchor="middle" fill="var(--muted)" font-size="10">'+b.toFixed(2)+'</text>';}
+  for(let i=0;i<=4;i++){const k=hi*i/4;
+    s+='<line x1="'+p.l+'" x2="'+(W-p.r)+'" y1="'+ym(k)+'" y2="'+ym(k)+'" stroke="var(--line)"/>'
+     +'<text x="'+(p.l-6)+'" y="'+(ym(k)+3.5)+'" text-anchor="end" fill="var(--muted)" font-size="10">'+k.toFixed(2)+'</text>';}
+
+  /* best-of-n reference levels */
+  for(const n of [2,4,16,64]){
+    const k=Math.log(n)-(n-1)/n;
+    if(k<hi) s+='<line x1="'+p.l+'" x2="'+(W-p.r)+'" y1="'+ym(k)+'" y2="'+ym(k)+'" stroke="var(--cyan)" stroke-dasharray="5 4"/>'
+      +'<text x="'+(W-p.r-3)+'" y="'+(ym(k)-3)+'" text-anchor="end" fill="var(--cyan)" font-size="9">n='+n+'</text>';
+  }
+  s+='<polyline points="'+vals.map(v=>xm(v[0])+','+ym(v[1])).join(' ')+'" fill="none" stroke="var(--blue)" stroke-width="3"/>';
+  s+='<circle cx="'+xm(betaNow)+'" cy="'+ym(klNow)+'" r="5" fill="var(--blue)"/>';
+  s+='<text x="'+(p.l+(W-p.l-p.r)/2)+'" y="'+(H-3)+'" text-anchor="middle" fill="var(--muted)" font-size="11">KL weight β</text>';
+  s+='<text transform="translate(11 '+(p.t+(H-p.t-p.b)/2)+') rotate(-90)" text-anchor="middle" fill="var(--muted)" font-size="11">KL from reference (nats)</text>';
+  $('klplot').innerHTML=s;
+}
+
+['beta','drift'].forEach(id=>$(id).addEventListener('input',update));
+$('lennorm').addEventListener('change',update);
+update();
+</script></body></html>
